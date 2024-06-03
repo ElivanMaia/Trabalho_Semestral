@@ -3,7 +3,7 @@ if (isset($_POST['submit'])) {
     $email = trim($_POST['email']);
     $senha = trim($_POST['senha']);
 
-    if (!empty(trim($email)) && !empty(trim($senha))) {
+    if (!empty($email) && !empty($senha)) {
         session_start();
         require 'conexao.php';
 

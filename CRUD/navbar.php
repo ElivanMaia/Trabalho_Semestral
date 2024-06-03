@@ -63,9 +63,9 @@ if (!isset($_SESSION['nome_usuario_cliente'])) {
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top navbar-custom">
             <div class="container-fluid">
-                <a href="#">
+                
                     <img src="images/logoReal.png" alt="Logo da Barbearia" style="width: auto; max-height: 90px;">
-                </a>
+                
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

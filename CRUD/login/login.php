@@ -18,7 +18,6 @@
 
         .img-side {
             object-fit: cover;
-            border-radius: 15px 0 0 15px;
             max-width: 100%;
             height: 100%;
         }

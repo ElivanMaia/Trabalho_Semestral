@@ -7,7 +7,7 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':usuario_id', $_SESSION['usuario_id']);
     $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $row = $stmt->fetch();
 
     if ($row) {
         $nomeUsuario = $row['nome'];
@@ -35,7 +35,7 @@ try {
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':usuario_id', $_SESSION['usuario_id']);
     $stmt->execute();
-    $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $agendamentos = $stmt->fetchAll();
 
 } catch(PDOException $e) {
     echo "Erro na consulta: " . $e->getMessage();
@@ -133,7 +133,6 @@ $conn = null;
             color: #007bff;
             margin-right: 0.5rem;
         }
-        /* Estilo para listas não ordenadas */
         .styled-list {
             list-style: none;
             padding-left: 0;
@@ -351,7 +350,7 @@ $conn = null;
                     </div>
                     <div class="form-group mb-4">
                         <label for="data">Data e Hora<span style="color: red">*</span></label>
-                        <input type="datetime-local" class="form-control" id="data" name="data" min="2024-05-26T16:00" required>
+                        <input type="datetime-local" class="form-control" id="data" name="data" required>
                     </div>
                     <div class="form-group mb-4">
                         <label for="service">Serviço<span style="color: red">*</span></label>
@@ -370,11 +369,11 @@ $conn = null;
                     </div>
                     <div class="form-group mb-4">
                         <label for="observacao">Especificações</label>
-                        <textarea class="form-control" id="observacao" name="observacao" placeholder="Digite suas observações aqui" rows="5" required></textarea>
+                        <textarea class="form-control" id="observacao" name="observacao" placeholder="Digite suas observações aqui" rows="5"></textarea>
                     </div>
                     <div class="form-group mb-4">
                         <label for="referencia">Como ficou sabendo da barbearia?</label>
-                        <input type="text" class="form-control" id="referencia" name="referencia" placeholder="Digite sua resposta aqui" required>
+                        <input type="text" class="form-control" id="referencia" name="referencia" placeholder="Digite sua resposta aqui">
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Agendar</button>
                     <button type="button" id="meuAgendamentoBtn" class="btn btn-secondary btn-block" data-bs-toggle="modal" data-bs-target="#agendamentoModal">Meu agendamento</button>
