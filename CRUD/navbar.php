@@ -12,7 +12,7 @@ if (!isset($_SESSION['nome_usuario_cliente'])) {
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':usuario_id', $_SESSION['usuario_id']);
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch();
 
         if ($row) {
             $_SESSION['nome_usuario_cliente'] = $row['nome'];
@@ -63,9 +63,9 @@ if (!isset($_SESSION['nome_usuario_cliente'])) {
     <header>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top navbar-custom">
             <div class="container-fluid">
-                
-                    <img src="images/logoReal.png" alt="Logo da Barbearia" style="width: auto; max-height: 90px;">
-                
+
+                <img src="images/logoReal.png" alt="Logo da Barbearia" style="width: auto; max-height: 90px;">
+
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -101,12 +101,6 @@ if (!isset($_SESSION['nome_usuario_cliente'])) {
                             <a class="nav-link" href="#agendar">
                                 <i class="bi bi-calendar3 me-1"></i>
                                 Agendamento
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contatos">
-                                <i class="bi bi-telephone-fill me-1"></i>
-                                Contatos
                             </a>
                         </li>
 
@@ -166,8 +160,8 @@ if (!isset($_SESSION['nome_usuario_cliente'])) {
         function confirmarExclusaoConta() {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                    confirmButton: "btn btn-success swal2-margin",
-                    cancelButton: "btn btn-danger swal2-margin"
+                    confirmButton: "btn btn-success swal2-margin-left",
+                    cancelButton: "btn btn-danger swal2-margin-right"
                 },
                 buttonsStyling: false
             });
@@ -181,68 +175,68 @@ if (!isset($_SESSION['nome_usuario_cliente'])) {
                 cancelButtonText: "Não, cancele!",
                 reverseButtons: true
             }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch('verify/excluirConta.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: 'confirmacao_exclusao=confirmado'
-                        })
-                        .then(response => response.text())
-                        .then(responseText => {
-                            if (responseText === "success") {
-                                swalWithBootstrapButtons.fire({
-                                    title: "Excluído!",
-                                    text: "Sua conta foi excluída.",
-                                    icon: "success"
-                                }).then(() => {
-                                    window.location.href = 'verify/logout.php';
-                                });
-                            } else {
-                                swalWithBootstrapButtons.fire({
-                                    title: "Erro",
-                                    text: responseText,
-                                    icon: "error"
-                                });
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                            swalWithBootstrapButtons.fire({
-                                title: "Erro",
-                                text: "Erro ao excluir a conta. Por favor, tente novamente.",
-                                icon: "error"
-                            });
-                        });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
+    if (result.isConfirmed) {
+        fetch('verify/excluirConta.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'confirmacao_exclusao=confirmado'
+            })
+            .then(response => response.text())
+            .then(responseText => {
+                if (responseText === "success") {
                     swalWithBootstrapButtons.fire({
-                        title: "Cancelado",
-                        text: "Sua conta está segura :)",
+                        title: "Excluído!",
+                        text: "Sua conta foi excluída.",
+                        icon: "success"
+                    }).then(() => {
+                        window.location.href = 'verify/logout.php';
+                    });
+                } else {
+                    swalWithBootstrapButtons.fire({
+                        title: "Erro",
+                        text: responseText,
                         icon: "error"
                     });
                 }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                swalWithBootstrapButtons.fire({
+                    title: "Erro",
+                    text: "Erro ao excluir a conta. Por favor, tente novamente.",
+                    icon: "error"
+                });
             });
+    }
+});
         }
 
+
         function confirmarSairConta() {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Você realmente deseja sair da conta?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'verify/logout.php';
-                } else {
-                    console.log('Operação de saída da conta cancelada pelo usuário.');
-                }
-            });
+    Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Você realmente deseja sair da conta?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, sair',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            confirmButton: 'btn-left', // Troquei para btn-left
+            cancelButton: 'btn-right'  // Troquei para btn-right
         }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'verify/logout.php';
+        } else {
+            console.log('Operação de saída da conta cancelada pelo usuário.');
+        }
+    });
+        }
+
     </script>
 </body>
 
