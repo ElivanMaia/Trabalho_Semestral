@@ -20,10 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $resultado_verificar = $conn->prepare($sql_verificar);
         $resultado_verificar->bindParam(':id_usuario', $usuario_id);
         $resultado_verificar->execute();
-        $row = $resultado_verificar->fetch(PDO::FETCH_ASSOC);
+        $row = $resultado_verificar->fetch();
 
         if ($row['total_agendamentos'] > 0) {
-            header("Location: ../inicio_cli.php");
+            header("Location: ../index.php");
             exit();
         }
 
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $resultado->bindParam(':referencia', $referencia);
 
         if ($resultado->execute()) {
-            header("Location: ../inicio_cli.php");
+            header("Location: ../index.php?success=true#agendar");
             exit();
         } else {
             echo "Erro na inserção do agendamento.";

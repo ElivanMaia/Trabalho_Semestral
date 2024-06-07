@@ -107,8 +107,9 @@
     <script src="../node_modules/parsleyjs/dist/parsley.min.js"></script>
     <script src="../node_modules/parsleyjs/dist/i18n/pt-br.js"></script>
     <link rel="stylesheet" href="../node_modules/parsleyjs/src/parsley.css">
-    <script>
 
+    <script>
+        
     function mostrar() {
         let senha = document.getElementById("senha");
         let b = document.getElementById("mos");

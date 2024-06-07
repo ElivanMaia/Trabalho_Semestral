@@ -21,10 +21,10 @@ if (isset($_POST['submit'])) {
             $cargo = $usuario['cargo'];
 
             if ($cargo == 1) {
-                header('Location: ../inicio_funcio.php?login=success');
+                header('Location: ../inicioAdm.php?login=success');
                 exit();
             } else {
-                header('Location: ../inicio_cli.php?login=success');
+                header('Location: ../index.php?login=success');
                 exit();
             }
         } else {

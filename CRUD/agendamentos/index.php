@@ -205,6 +205,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <td><?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td>
                                 <button type="button" class="btn btn-warning me-2" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-nome="<?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?>" data-telefone="<?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?>" data-horario="<?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?>" data-corte="<?php echo htmlspecialchars($agendamento['id_corte'], ENT_QUOTES, 'UTF-8'); ?>" data-observacoes="<?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?>" data-referencia="<?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
+
                                 <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $agendamento['id_agendamento']; ?>)">Excluir</button>
                             </td>
                         </tr>
@@ -304,13 +305,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 text: "Você não poderá reverter isso!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Cancelar'
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `../verify/deletarAgen.php?id=${id}`;
+                    Swal.fire(
+                        'Deletado!',
+                        'Seu item foi deletado com sucesso.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = `../verify/deletarAgen.php?id=${id}`;
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                        'Cancelado!',
+                        'A exclusão foi cancelada com sucesso.',
+                        'info'
+                    );
                 }
             });
         }

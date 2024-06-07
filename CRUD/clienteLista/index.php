@@ -260,13 +260,26 @@ $conn = null;
                 text: "Você não poderá reverter isso!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#d33',
+                cancelButtonText: 'Cancelar',
                 confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Cancelar'
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `../verify/deletarCliente.php?id=${id}`;
+                    Swal.fire(
+                        'Deletado!',
+                        'Seu item foi deletado com sucesso.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = `../verify/deletarCliente.php?id=${id}`;
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                        'Cancelado!',
+                        'A exclusão foi cancelada com sucesso.',
+                        'info'
+                    );
                 }
             });
         }

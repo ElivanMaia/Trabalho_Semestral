@@ -1,11 +1,4 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login/login.php");
-    exit();
-}
-
 include 'verify/conexao.php';
 
 try {
@@ -43,11 +36,14 @@ try {
     <style>
         body {
             background-color: #a0a0a0;
+            overflow: hidden;
         }
 
         .main-content {
             margin-top: 90px;
             padding: 0 15px;
+            overflow-y: auto;
+            height: calc(100vh - 90px);
         }
 
         .card-custom {
@@ -59,6 +55,7 @@ try {
 
         .table-container {
             margin-top: 30px;
+            overflow-x: auto;
         }
 
         .table thead th {

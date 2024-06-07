@@ -19,22 +19,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($row) {
             $senhaBanco = $row['senha'];
             if ($senhaAtual === $senhaBanco) {
-                $sqlUpdate = "UPDATE usuarios SET senha = :novaSenha WHERE id = :usuario_id";
-                $resultadoUpdate = $conn->prepare($sqlUpdate);
-                $resultadoUpdate->bindParam(':novaSenha', $novaSenha);
-                $resultadoUpdate->bindParam(':usuario_id', $usuario_id);
-                $resultadoUpdate->execute();
+                if ($novaSenha === $confirmarSenha) {
+                    $sqlUpdate = "UPDATE usuarios SET senha = :novaSenha WHERE id = :usuario_id";
+                    $resultadoUpdate = $conn->prepare($sqlUpdate);
+                    $resultadoUpdate->bindParam(':novaSenha', $novaSenha);
+                    $resultadoUpdate->bindParam(':usuario_id', $usuario_id);
+                    $resultadoUpdate->execute();
 
-                header('Location: ../inicio_cli.php?senha_atualizada=1');
-                exit();
+                    header('Location: ../index.php?senha_atualizada=1');
+                    exit();
+                } else {
+                    header('Location: ../index.php?senhas_nao_coincidem=1');
+                    exit();
+                }
             } else {
-                header('Location: ../inicio_cli.php?erro_senha_atual=1');
+                header('Location: ../index.php?erro_senha_atual=1');
                 exit();
             }
         } else {
-            header('Location: ../inicio_cli.php?usuario_nao_encontrado=1');
+            header('Location: ../index.php?usuario_nao_encontrado=1');
             exit();
         }
     }
 }
-?>

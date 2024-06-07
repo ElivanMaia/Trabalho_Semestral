@@ -426,6 +426,21 @@ $conn = null;
         $(document).ready(function() {
             $('#editarModal').modal('show');
         });
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successParam = urlParams.get('success');
+
+            if (successParam === 'true') {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Agendamento realizado com sucesso!',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        });
     </script>
 
 </body>
