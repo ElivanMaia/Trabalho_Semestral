@@ -100,16 +100,6 @@ try {
                     </div>
                 </div>
             </div>
-
-            <div class="col card-custom">
-                <div class="card">
-                    <div class="card-header">Feedbacks</div>
-                    <div class="card-body">
-                        <p class="card-text">Total de Feedbacks: <?php echo $total_clientes; ?></p>
-                        <a href="feedbacks/index.php" class="btn btn-primary">Ver Lista de Feedbacks</a>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="row mt-4">
@@ -134,10 +124,18 @@ try {
                     $stmtMaisPedidos->execute();
                     $resultadosMaisPedidos = $stmtMaisPedidos->fetchAll();
 
-                    echo "<br> . <br> . <br>";
+                    echo "<br> . <br>";
+                    echo "<div class='container'>";
+                    echo "   <div class='row'>";
+                    echo "       <div class='col'>";
+                    echo "           <h2 class='text-center fs-5 fw-bold'>Relatório: Top 3 Serviços Mais Agendados</h2>";
+                    echo "       </div>";
+                    echo "   </div>";
+                    echo "</div>";
                     echo "<div class='table-container'>";
                     echo "<table class='table table-bordered table-responsive'>";
-                    echo "<thead><tr><th>Serviço</th><th>Quantidade de Agendamentos</th><th>Preço Total</th></tr></thead>";
+                    echo "<thead style='color: #808080;'><tr><th>Serviço</th><th>Quantidade de Agendamentos</th><th>Preço Total</th></tr></thead>";
+
                     echo "<tbody>";
                     foreach ($resultadosMaisPedidos as $resultado) {
                         echo "<tr>";

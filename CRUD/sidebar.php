@@ -30,6 +30,7 @@ if (!isset($_SESSION['nome_usuario'])) {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,6 +42,8 @@ if (!isset($_SESSION['nome_usuario'])) {
             height: 100vh;
             font-family: 'Nunito', sans-serif;
             transition: padding-left 0.3s;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .header {
@@ -53,8 +56,8 @@ if (!isset($_SESSION['nome_usuario'])) {
             align-items: center;
             justify-content: space-between;
             padding: 0 1rem;
-            background-color: #343a40;
-            z-index: 100;
+            background-color: #808080;
+            z-index: 101;
             transition: left 0.3s;
         }
 
@@ -74,7 +77,7 @@ if (!isset($_SESSION['nome_usuario'])) {
             background-color: #343a40;
             padding: 0.5rem 1rem 0;
             transition: left 0.3s;
-            z-index: 99;
+            z-index: 100;
         }
 
         .nav {
@@ -107,19 +110,7 @@ if (!isset($_SESSION['nome_usuario'])) {
 
         .show {
             left: 0 !important;
-        }
-
-        .active {
-            color: white;
-        }
-
-        .active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 2px;
-            height: 32px;
-            background-color: white;
+            z-index: 101;
         }
 
         .body-pd {
@@ -142,6 +133,10 @@ if (!isset($_SESSION['nome_usuario'])) {
             left: -250px !important;
         }
 
+        .nav_name {
+            font-size: 15px;
+        }
+
         @media (max-width: 768px) {
             .header_toggle {
                 position: absolute;
@@ -158,20 +153,21 @@ if (!isset($_SESSION['nome_usuario'])) {
 
             .l-navbar {
                 left: -250px;
+                z-index: 101;
             }
         }
     </style>
 </head>
+
 <body class="body-pd">
     <header class="header" id="header">
         <div class="header_toggle"> <i class='bi bi-list' id="header-toggle"></i> </div>
-        <?php echo "<p class='fs-4 text-white mb-0'>" . $_SESSION['nome_usuario'] ."</p>"; ?>
     </header>
 
     <div class="l-navbar show" id="nav-bar">
         <nav class="nav">
             <div style="margin-top: 30px;">
-                <img src="images/logoReal.png" alt="Logo da Barbearia" class="img-fluid mb-4" style="width: auto; max-height: 90px;">
+                <img src="images/logoReal.png" alt="Logo da Barbearia" class="img-fluid mb-4" style="width: auto; max-height: 110px;">
                 <div class="nav_list">
                     <a href="#" class="nav_link active">
                         <i class='bi bi-house-door nav_icon'></i>
@@ -185,61 +181,82 @@ if (!isset($_SESSION['nome_usuario'])) {
                         <i class='bi bi-people nav_icon'></i>
                         <span class="nav_name">Clientes</span>
                     </a>
-                    <a href="todosPrecos/index.php" class="nav_link">
-                        <i class='bi bi-currency-dollar nav_icon'></i>
-                        <span class="nav_name">Preços</span>
-                    </a>
+                </div>
+                <br>
+                <hr style="border-color: white;">
+                <br>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="images/perfil.png" alt="Imagem de Perfil" class="img-fluid me-2" style="width: 50px;">
+                            <?php echo $_SESSION['nome_usuario']; ?>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" onclick="SairConta(event)">Sair</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <a href="javascript:void(0);" class="nav_link" onclick="SairConta(event)">
-                <i class='bi bi-box-arrow-right nav_icon'></i>
-                <span class="nav_name">Sair</span>
-            </a>
         </nav>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
             const toggle = document.getElementById('header-toggle');
             const nav = document.getElementById('nav-bar');
-            const bodypd = document.querySelector('body');
+            const body = document.querySelector('body');
 
-            if (toggle && nav && bodypd) {
+            if (toggle && nav && body) {
                 toggle.addEventListener('click', () => {
                     nav.classList.toggle('nav-hidden');
-                    bodypd.classList.toggle('body-no-pd');
+                    body.classList.toggle('body-no-pd');
                 });
             }
         });
 
         function SairConta(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Você realmente deseja sair da conta?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'verify/logout.php';
-                } else {
-                    console.log('Operação de saída da conta cancelada pelo usuário.');
-                }
-            });
+    event.preventDefault();
+    Swal.fire({
+        title: 'Tem certeza?',
+        text: 'Você realmente deseja sair da conta?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sim, sair',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'verify/logout.php';
+        } else {
+            console.log('Operação de saída da conta cancelada pelo usuário.');
         }
+    });
+}
 
-        if (window.innerWidth <= 768) {
-                    nav.classList.remove('show');
-                    bodypd.classList.add('body-no-pd');
-                }
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+if (window.innerWidth <= 768) {
+    nav.classList.remove('show');
+    body.classList.add('body-no-pd');
+}
+
+// Inicialize o dropdown do Bootstrap
+var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl);
+});
+</script>
+
 </body>
+
 </html>
+

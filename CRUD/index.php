@@ -397,7 +397,11 @@ $conn = null;
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
+                                        
                                     </table>
+                                    <hr style="border-color: white;">
+                                    <button type="button" class="btn btn-danger">Danger</button>
+                                    <button type="button" class="btn btn-warning">Warning</button>
                                 </div>
                             <?php else : ?>
                                 <p class="text-center text-dark">Nenhum agendamento encontrado.</p>

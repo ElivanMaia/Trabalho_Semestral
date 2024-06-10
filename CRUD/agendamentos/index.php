@@ -47,35 +47,71 @@ try {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    try {
-        $sql = "UPDATE agendamentos SET 
-                    telefone_cliente = :telefone, 
-                    horario_agendamento = :horario, 
-                    id_corte = :servico, 
-                    observacoes = :observacoes, 
-                    referencia = :referencia 
-                WHERE id = :id_agendamento";
+    if (isset($_POST['id_agendamento'])) {
+        try {
+            $sql = "UPDATE agendamentos SET 
+                        telefone_cliente = :telefone, 
+                        horario_agendamento = :horario, 
+                        id_corte = :servico, 
+                        observacoes = :observacoes, 
+                        referencia = :referencia 
+                    WHERE id = :id_agendamento";
 
-        $stmt = $conn->prepare($sql);
+            $stmt = $conn->prepare($sql);
 
-        $stmt->bindParam(':telefone', $_POST['telefone_cliente']);
-        $stmt->bindParam(':horario', $_POST['horario_agendamento']);
-        $stmt->bindParam(':servico', $_POST['id_corte']);
-        $stmt->bindParam(':observacoes', $_POST['observacoes']);
-        $stmt->bindParam(':referencia', $_POST['referencia']);
-        $stmt->bindParam(':id_agendamento', $_POST['id_agendamento']);
+            $stmt->bindParam(':telefone', $_POST['telefone_cliente']);
+            $stmt->bindParam(':horario', $_POST['horario_agendamento']);
+            $stmt->bindParam(':servico', $_POST['id_corte']);
+            $stmt->bindParam(':observacoes', $_POST['observacoes']);
+            $stmt->bindParam(':referencia', $_POST['referencia']);
+            $stmt->bindParam(':id_agendamento', $_POST['id_agendamento']);
 
-        $stmt->execute();
+            $stmt->execute();
 
-        if (isset($_GET['atualizacao']) && $_GET['atualizacao'] === 'sucesso') {
-            echo '<script>alert("A atualização foi concluída com sucesso!");</script>';
+            header("Location: {$_SERVER['PHP_SELF']}?atualizacao=sucesso");
+            exit();
+        } catch (PDOException $e) {
+            echo "Erro na atualização: " . $e->getMessage();
         }
+    } else {
+        try {
+            $telefone_cliente = $_POST['telefone_cliente'];
+            $horario_agendamento = $_POST['horario_agendamento'];
+            $id_corte = $_POST['id_corte'];
+            $observacoes = $_POST['observacoes'];
+            $referencia = $_POST['referencia'];
 
-        header("Location: {$_SERVER['PHP_SELF']}?atualizacao=sucesso");
-        exit();
-    } catch (PDOException $e) {
-        echo "Erro na atualização: " . $e->getMessage();
+            $sql = "INSERT INTO agendamentos (id_usuario, telefone_cliente, horario_agendamento, id_corte, observacoes, referencia) 
+        VALUES (:id_usuario, :telefone_cliente, :horario_agendamento, :id_corte, :observacoes, :referencia)";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_usuario', $_SESSION['usuario_id']);
+            $stmt->bindParam(':telefone_cliente', $telefone_cliente);
+            $stmt->bindParam(':horario_agendamento', $horario_agendamento);
+            $stmt->bindParam(':id_corte', $id_corte);
+            $stmt->bindParam(':observacoes', $observacoes);
+            $stmt->bindParam(':referencia', $referencia);
+
+            $stmt->execute();
+
+            header("Location: ../agendamentos/index.php?agendamento_sucesso=true");
+            exit();
+        } catch (PDOException $e) {
+            echo "Erro ao salvar o agendamento: " . $e->getMessage();
+            exit();
+        }
     }
+}
+
+try {
+    $sql = "SELECT COUNT(*) AS total_agendamentos FROM agendamentos";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $row = $stmt->fetch();
+    $total_agendamentos = $row["total_agendamentos"];
+} catch (PDOException $e) {
+    echo "Erro na consulta: " . $e->getMessage();
+    exit();
 }
 
 ?>
@@ -92,10 +128,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link rel="stylesheet" href="node_modules/parsleyjs/src/parsley.css">
     <style>
-        body {
-            overflow-y: hidden;
-        }
-
         .navbar-custom {
             background-color: #343a40;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -137,6 +169,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             max-height: 500px;
             overflow: auto;
         }
+
+        .divider {
+            border-top: 5px solid #000;
+        }
     </style>
 </head>
 
@@ -151,13 +187,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="../inicio_funcio.php">Início</a>
+                        <a class="nav-link" href="../inicioAdm.php">Início</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="../agendamentos/index.php">Agendamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../todosPrecos/index.php">Preços</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="../clienteLista/index.php">Listar Clientes</a>
@@ -175,8 +208,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </nav>
 
-    <div class="container-fluid main-content">
-        <h2 class="mb-4">Agendamentos</h2>
+    <div class="container-fluid main-content position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Agendamentos</h2>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agendarModal">Agendar</button>
+    </div>
+    <div class="card-body">
+        <h5 class="card-text">Número de Agendamentos: <?php echo $total_agendamentos; ?></h5>
+    </div>
+    <br>
+    <hr class="divider">
+    <br>
+
+
+
         <div class="table-responsive scroll-container">
             <table class="table table-hover table-striped">
                 <thead class="thead-dark">
@@ -270,6 +315,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
+    <div class="modal fade" id="agendarModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="agendarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agendarModalLabel">Agendar Novo Horário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formAgendar" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nome_cliente_agendar" class="form-label">Nome do Cliente</label>
+                            <input type="text" class="form-control" id="nome_cliente_agendar" name="nome_cliente_agendar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefone_agendar" class="form-label">Telefone do Cliente</label>
+                            <input type="tel" class="form-control" id="telefone_agendar" name="telefone_cliente" onkeypress="$(this).mask('(00) 0000-0000')" placeholder="(00) 0000-0000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="horario_agendar" class="form-label">Horário do Agendamento</label>
+                            <input type="datetime-local" class="form-control" id="horario_agendar" name="horario_agendamento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="corte_agendar" class="form-label">Serviço</label>
+                            <select class="form-select" id="corte_agendar" name="id_corte" required>
+                                <option value="" disabled selected hidden>Selecione o serviço desejado</option>
+                                <?php
+                                foreach ($cortes as $corte) {
+                                    echo '<option value="' . htmlspecialchars($corte['id'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($corte['nome'], ENT_QUOTES, 'UTF-8') . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="observacoes_agendar" class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes_agendar" name="observacoes"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="referencia_agendar" class="form-label">Referência</label>
+                            <input type="text" class="form-control" id="referencia_agendar" name="referencia">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -278,6 +375,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="node_modules/parsleyjs/dist/i18n/pt-br.js"></script>
 
     <script>
+        function atualizarNomeCliente(idAgendamento, nomeCliente) {
+            const nomeClienteCell = document.getElementById('nomeCliente_' + idAgendamento);
+            if (nomeClienteCell) {
+                nomeClienteCell.textContent = nomeCliente;
+            }
+        }
+
+        // Exemplo de chamada da função após a inserção bem-sucedida do agendamento
+        // Substitua os valores pelos valores reais após a inserção do agendamento
+        atualizarNomeCliente('ID_AGENDAMENTO', 'NOME_CLIENTE');
+
         function editarAgendamento(button) {
             const id = button.getAttribute('data-id');
             const nome = button.getAttribute('data-nome');
@@ -347,7 +455,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
         }
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sucessoAtualizacao = urlParams.get('atualizacao');
+            if (sucessoAtualizacao === 'sucesso') {
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'A atualização foi concluída com sucesso!',
+                    icon: 'success'
+                }).then(() => {
+                    window.history.replaceState(null, null, window.location.pathname);
+                });
+            }
+        };
+
+        function salvarAgendamento() {
+            const formAgendar = document.getElementById('formAgendar');
+            const formData = new FormData(formAgendar);
+
+            fetch(formAgendar.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao salvar o agendamento');
+                }
+            }).then(() => {
+                var agendarModal = new bootstrap.Modal(document.getElementById('agendarModal'));
+                agendarModal.hide();
+
+                formAgendar.reset();
+            }).catch(error => {
+                console.error('Erro:', error);
+            });
+        }
+
+
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sucessoAgendamento = urlParams.get('agendamento_sucesso');
+            if (sucessoAgendamento === 'true') {
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'O agendamento foi salvo com sucesso!',
+                    icon: 'success'
+                }).then(() => {
+                    window.history.replaceState(null, null, window.location.pathname);
+                });
+            }
+        };
     </script>
+
 </body>
 
 </html>
