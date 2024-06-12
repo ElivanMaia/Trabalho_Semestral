@@ -2,6 +2,7 @@
 session_start();
 include 'verify/conexao.php';
 
+
 try {
     $sql = "SELECT nome FROM usuarios WHERE id = :usuario_id";
     $stmt = $conn->prepare($sql);
@@ -36,13 +37,10 @@ try {
     $stmt->bindParam(':usuario_id', $_SESSION['usuario_id']);
     $stmt->execute();
     $agendamentos = $stmt->fetchAll();
-
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     echo "Erro na consulta: " . $e->getMessage();
     exit();
 }
-
-$conn = null;
 ?>
 
 
@@ -73,22 +71,6 @@ $conn = null;
         .section-dark-bg {
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
-        }
-
-        #submit {
-            background-color: #fff;
-            color: #000;
-            text-decoration: none;
-            padding: 18px 40px;
-            border-radius: 8px;
-        }
-
-        #submit:hover {
-            background-color: rgba(255, 255, 255, 0.5);
-        }
-
-        #submit:active {
-            background-color: #666666;
         }
 
         #servicos {
@@ -141,6 +123,16 @@ $conn = null;
         </script>";
         $_SESSION['cadastro_success_alerta'] = true;
     }
+
+    if (isset($_GET['agendamento_existente']) && $_GET['agendamento_existente'] == 'true') {
+        echo "<script>
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Você já possui um agendamento pendente!',
+        });
+        </script>";
+    }
     ?>
 
     <section id="inicio" class="d-flex justify-content-center align-items-center">
@@ -173,7 +165,7 @@ $conn = null;
                         <img src="images/equipe2.jpg" class="card-img-top" alt="Carlos Souza">
                         <div class="card-body">
                             <h5 class="card-title" style="font-size: 20px;">Carlos Souza</h5>
-                            <p class="card-text" style="font-size: 18px;">Barbeiro com experiência em barbas e cortes artísticos.</p>
+                            <p class="card-text" style="font-size: 18px;">Barbeiro com experiência em barbas e cortes artísticos</p>
                         </div>
                     </div>
                 </div>
@@ -182,7 +174,7 @@ $conn = null;
                         <img src="images/equipe3.jpg" class="card-img-top" alt="Ricardo Pereira">
                         <div class="card-body">
                             <h5 class="card-title" style="font-size: 20px;">Ricardo Pereira</h5>
-                            <p class="card-text" style="font-size: 18px;">Expert em tratamentos capilares e estética masculina.</p>
+                            <p class="card-text" style="font-size: 18px;">Expert em tratamentos capilares e estética masculina</p>
                         </div>
                     </div>
                 </div>
@@ -281,10 +273,10 @@ $conn = null;
                             <h4 class="card-title" style="font-size: 24px;"><i class="bi bi-calendar-day icon"></i> Dias de Agendamento</h4>
                             <br>
                             <ul class="list-unstyled styled-list">
-                                <li style="font-size: 20px;">Segunda-feira</li>
                                 <li style="font-size: 20px;">Terça-feira</li>
                                 <li style="font-size: 20px;">Quarta-feira</li>
                                 <li style="font-size: 20px;">Quinta-feira</li>
+                                <li style="font-size: 20px;">Sexta-feira</li>
                                 <li style="font-size: 20px;">Sábado</li>
                             </ul>
                         </div>
@@ -335,6 +327,7 @@ $conn = null;
                         <div class="form-group mb-4">
                             <label for="data">Data e Hora<span style="color: red">*</span></label>
                             <input type="datetime-local" class="form-control" id="data" name="data" required>
+
                         </div>
                         <div class="form-group mb-4">
                             <label for="service">Serviço<span style="color: red">*</span></label>
@@ -365,12 +358,11 @@ $conn = null;
                 </div>
             </div>
 
-            <!-- Modal -->
             <div class="modal fade" id="agendamentoModal" tabindex="-1" aria-labelledby="agendamentoModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title text-dark" id="agendamentoModalLabel">Meus Agendamentos</h5>
+                            <h5 class="modal-title text-dark" id="agendamentoModalLabel">Meu Agendamento</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -397,11 +389,8 @@ $conn = null;
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
-                                        
+
                                     </table>
-                                    <hr style="border-color: white;">
-                                    <button type="button" class="btn btn-danger">Danger</button>
-                                    <button type="button" class="btn btn-warning">Warning</button>
                                 </div>
                             <?php else : ?>
                                 <p class="text-center text-dark">Nenhum agendamento encontrado.</p>
@@ -418,7 +407,8 @@ $conn = null;
     ?>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script src="node_modules/parsleyjs/dist/parsley.min.js"></script>
@@ -434,8 +424,9 @@ $conn = null;
         document.addEventListener('DOMContentLoaded', (event) => {
             const urlParams = new URLSearchParams(window.location.search);
             const successParam = urlParams.get('success');
+            const alertShown = localStorage.getItem('alertShown');
 
-            if (successParam === 'true') {
+            if (successParam === 'true' && !alertShown) {
                 Swal.fire({
                     position: 'top-end',
                     icon: 'success',
@@ -443,6 +434,7 @@ $conn = null;
                     showConfirmButton: false,
                     timer: 2000
                 });
+                localStorage.setItem('alertShown', 'true');
             }
         });
     </script>

@@ -191,6 +191,7 @@ $conn = null;
         <br>
         <hr class="divider">
         <br>
+        <div class="container-fluid">
         <div class="table-responsive">
             <table class="table table-hover table-striped">
                 <thead class="thead-dark">
@@ -223,6 +224,7 @@ $conn = null;
             </tbody>
         </table>
         </div>
+    </div>
     </div>
 
 
@@ -318,7 +320,8 @@ $conn = null;
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = '../verify/logout.php';

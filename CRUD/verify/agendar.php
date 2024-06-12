@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = $resultado_verificar->fetch();
 
         if ($row['total_agendamentos'] > 0) {
-            header("Location: ../index.php");
+            header("Location: ../index.php?agendamento_existente=true");
             exit();
         }
 
@@ -50,5 +50,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } finally {
         $conn = null;
     }
-} 
-
+}

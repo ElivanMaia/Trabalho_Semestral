@@ -50,7 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['id_agendamento'])) {
         try {
             $sql = "UPDATE agendamentos SET 
-                        telefone_cliente = :telefone, 
                         horario_agendamento = :horario, 
                         id_corte = :servico, 
                         observacoes = :observacoes, 
@@ -59,7 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $stmt = $conn->prepare($sql);
 
-            $stmt->bindParam(':telefone', $_POST['telefone_cliente']);
             $stmt->bindParam(':horario', $_POST['horario_agendamento']);
             $stmt->bindParam(':servico', $_POST['id_corte']);
             $stmt->bindParam(':observacoes', $_POST['observacoes']);
@@ -68,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $stmt->execute();
 
-            header("Location: {$_SERVER['PHP_SELF']}?atualizacao=sucesso");
+            header("Location: ../agendamentos/index.php?atualizacao=sucesso");
             exit();
         } catch (PDOException $e) {
             echo "Erro na atualização: " . $e->getMessage();
@@ -209,54 +207,55 @@ try {
     </nav>
 
     <div class="container-fluid main-content position-relative">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Agendamentos</h2>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agendarModal">Agendar</button>
-    </div>
-    <div class="card-body">
-        <h5 class="card-text">Número de Agendamentos: <?php echo $total_agendamentos; ?></h5>
-    </div>
-    <br>
-    <hr class="divider">
-    <br>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Agendamentos</h2>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agendarModal">Agendar</button>
+        </div>
+        <div class="card-body">
+            <h5 class="card-text">Número de Agendamentos: <?php echo $total_agendamentos; ?></h5>
+        </div>
+        <br>
+        <hr class="divider">
+        <br>
 
 
-
-        <div class="table-responsive scroll-container">
-            <table class="table table-hover table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Telefone</th>
-                        <th>Horário</th>
-                        <th>Serviço</th>
-                        <th>Preço</th>
-                        <th>Observações</th>
-                        <th>Referência</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($agendamentos as $agendamento) : ?>
+        <div class="container-fluid">
+            <div class="table-responsive scroll-container">
+                <table class="table table-hover table-striped">
+                    <thead class="thead-dark">
                         <tr>
-                            <td><?php echo htmlspecialchars($agendamento['id_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['nome_corte'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td>R$ <?php echo number_format($agendamento['preco_corte'], 2, ',', '.'); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td>
-                                <button type="button" class="btn btn-warning me-2" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-nome="<?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?>" data-telefone="<?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?>" data-horario="<?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?>" data-corte="<?php echo htmlspecialchars($agendamento['id_corte'], ENT_QUOTES, 'UTF-8'); ?>" data-observacoes="<?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?>" data-referencia="<?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
-
-                                <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $agendamento['id_agendamento']; ?>)">Excluir</button>
-                            </td>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Telefone</th>
+                            <th>Horário</th>
+                            <th>Serviço</th>
+                            <th>Preço</th>
+                            <th>Observações</th>
+                            <th>Referência</th>
+                            <th>Ações</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($agendamentos as $agendamento) : ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($agendamento['id_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($agendamento['nome_corte'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td>R$ <?php echo number_format($agendamento['preco_corte'], 2, ',', '.'); ?></td>
+                                <td><?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td>
+                                    <button type="button" class="btn btn-warning me-2" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-nome="<?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?>" data-telefone="<?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?>" data-horario="<?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?>" data-corte="<?php echo htmlspecialchars($agendamento['id_corte'], ENT_QUOTES, 'UTF-8'); ?>" data-observacoes="<?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?>" data-referencia="<?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
+
+                                    <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $agendamento['id_agendamento']; ?>)">Excluir</button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -267,17 +266,9 @@ try {
                     <h5 class="modal-title" id="editarModalLabel">Editar Agendamento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formEditarAgendamento" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <form id="formEditarAgendamento" method="POST" action="">
                     <div class="modal-body">
                         <input type="hidden" id="id_agendamento" name="id_agendamento">
-                        <div class="mb-3">
-                            <label for="nome_usuario" class="form-label">Nome do Cliente</label>
-                            <input type="text" class="form-control" id="nome_usuario" name="nome_usuario" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefone_cliente" class="form-label">Telefone do Cliente</label>
-                            <input type="tel" class="form-control" id="telefone_cliente" name="telefone_cliente" onkeypress="$(this).mask('(00) 0000-0000')" placeholder="(00) 0000-0000" required>
-                        </div>
                         <div class="mb-3">
                             <label for="horario_agendamento" class="form-label">Horário do Agendamento</label>
                             <input type="datetime-local" class="form-control" id="horario_agendamento" name="horario_agendamento" required>
@@ -295,7 +286,7 @@ try {
                                     echo '<option value="' . htmlspecialchars($corte['id'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($corte['nome'], ENT_QUOTES, 'UTF-8') . '</option>';
                                 }
                                 ?>
-                            </select>
+                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="observacoes" class="form-label">Observações</label>
@@ -308,12 +299,13 @@ try {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <button type="submit" class="btn btn-warning">Salvar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
     <div class="modal fade" id="agendarModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="agendarModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -322,7 +314,7 @@ try {
                     <h5 class="modal-title" id="agendarModalLabel">Agendar Novo Horário</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formAgendar" method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                <form id="formAgendar" method="POST" action="">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nome_cliente_agendar" class="form-label">Nome do Cliente</label>
@@ -375,29 +367,14 @@ try {
     <script src="node_modules/parsleyjs/dist/i18n/pt-br.js"></script>
 
     <script>
-        function atualizarNomeCliente(idAgendamento, nomeCliente) {
-            const nomeClienteCell = document.getElementById('nomeCliente_' + idAgendamento);
-            if (nomeClienteCell) {
-                nomeClienteCell.textContent = nomeCliente;
-            }
-        }
-
-        // Exemplo de chamada da função após a inserção bem-sucedida do agendamento
-        // Substitua os valores pelos valores reais após a inserção do agendamento
-        atualizarNomeCliente('ID_AGENDAMENTO', 'NOME_CLIENTE');
-
         function editarAgendamento(button) {
             const id = button.getAttribute('data-id');
-            const nome = button.getAttribute('data-nome');
-            const telefone = button.getAttribute('data-telefone');
             const horario = button.getAttribute('data-horario');
             const corte = button.getAttribute('data-corte');
             const observacoes = button.getAttribute('data-observacoes');
             const referencia = button.getAttribute('data-referencia');
 
             document.getElementById('id_agendamento').value = id;
-            document.getElementById('nome_usuario').value = nome;
-            document.getElementById('telefone_cliente').value = telefone;
             document.getElementById('horario_agendamento').value = horario;
             document.getElementById('id_corte').value = corte;
             document.getElementById('observacoes').value = observacoes;
@@ -406,6 +383,40 @@ try {
             var editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
             editarModal.show();
         }
+
+        $(document).ready(function () {
+            $('#formEditarAgendamento').on('submit', function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(this);
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: 'Agendamento atualizado com sucesso.',
+                            icon: 'success'
+                        }).then(() => {
+                            var editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
+                            editarModal.hide();
+
+                            window.location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Ocorreu um erro ao atualizar o agendamento.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            });
+        });
 
         function confirmarExclusao(id) {
             Swal.fire({
@@ -458,8 +469,10 @@ try {
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const sucessoAtualizacao = urlParams.get('atualizacao');
-            if (sucessoAtualizacao === 'sucesso') {
+
+            const atualizacao = urlParams.get('atualizacao');
+
+            if (atualizacao === 'sucesso') {
                 Swal.fire({
                     title: 'Sucesso!',
                     text: 'A atualização foi concluída com sucesso!',
@@ -467,30 +480,16 @@ try {
                 }).then(() => {
                     window.history.replaceState(null, null, window.location.pathname);
                 });
+            } else if (atualizacao === 'falha') {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Ocorreu um erro durante a atualização.',
+                    icon: 'error'
+                }).then(() => {
+                    window.history.replaceState(null, null, window.location.pathname);
+                });
             }
-        };
-
-        function salvarAgendamento() {
-            const formAgendar = document.getElementById('formAgendar');
-            const formData = new FormData(formAgendar);
-
-            fetch(formAgendar.action, {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao salvar o agendamento');
-                }
-            }).then(() => {
-                var agendarModal = new bootstrap.Modal(document.getElementById('agendarModal'));
-                agendarModal.hide();
-
-                formAgendar.reset();
-            }).catch(error => {
-                console.error('Erro:', error);
-            });
         }
-
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
