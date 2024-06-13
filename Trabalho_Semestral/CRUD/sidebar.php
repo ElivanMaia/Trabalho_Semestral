@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['usuario_id'])) {
-    header("Location: login/login.php");
+    header("Location: ../login/login.php");
     exit();
 }
 
@@ -59,13 +59,14 @@ if (!isset($_SESSION['nome_usuario'])) {
             background-color: #808080;
             z-index: 101;
             transition: left 0.3s;
+            background-color: #fff;
         }
 
         .header_toggle {
-            color: white;
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
             margin-left: 20px;
+            margin-top: 10px;
         }
 
         .l-navbar {
@@ -167,17 +168,17 @@ if (!isset($_SESSION['nome_usuario'])) {
     <div class="l-navbar show" id="nav-bar">
         <nav class="nav">
             <div style="margin-top: 30px;">
-                <img src="images/logoReal.png" alt="Logo da Barbearia" class="img-fluid mb-4" style="width: auto; max-height: 110px;">
+                <img src="../images/logoReal.png" alt="Logo da Barbearia" class="img-fluid mb-4" style="width: auto; max-height: 110px;">
                 <div class="nav_list">
-                    <a href="#" class="nav_link active">
+                    <a href="../inicioAdmin/inicioAdm" class="nav_link active">
                         <i class='bi bi-house-door nav_icon'></i>
                         <span class="nav_name">Início</span>
                     </a>
-                    <a href="agendamentos/index.php" class="nav_link">
+                    <a href="../agendamentos/index.php" class="nav_link">
                         <i class='bi bi-calendar-week nav_icon'></i>
                         <span class="nav_name">Agendamentos</span>
                     </a>
-                    <a href="clienteLista/index.php" class="nav_link">
+                    <a href="../clienteLista/index.php" class="nav_link">
                         <i class='bi bi-people nav_icon'></i>
                         <span class="nav_name">Clientes</span>
                     </a>
@@ -188,7 +189,7 @@ if (!isset($_SESSION['nome_usuario'])) {
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="dropdown">
                         <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="images/perfil.png" alt="Imagem de Perfil" class="img-fluid me-2" style="width: 50px;">
+                            <img src="../images/perfil.png" alt="Imagem de Perfil" class="img-fluid me-2" style="width: 50px;">
                             <?php echo $_SESSION['nome_usuario']; ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -248,12 +249,6 @@ if (window.innerWidth <= 768) {
     nav.classList.remove('show');
     body.classList.add('body-no-pd');
 }
-
-// Inicialize o dropdown do Bootstrap
-var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
-var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
-    return new bootstrap.Dropdown(dropdownToggleEl);
-});
 </script>
 
 </body>

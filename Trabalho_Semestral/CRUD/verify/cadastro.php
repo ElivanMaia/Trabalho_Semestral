@@ -51,7 +51,7 @@ if (isset($_POST['submit'])) {
             $_SESSION['usuario_id'] = $usuario_id;
         
             if ($cargo == 1) {
-                header('Location: ../inicioAdm.php?cadastro_success=1');
+                header('Location: ../inicioAdmin/inicioAdm.php?cadastro_success=1');
             } else {
                 header('Location: ../index.php?cadastro_success=1');
             }

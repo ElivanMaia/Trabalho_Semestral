@@ -21,7 +21,7 @@ if (isset($_POST['submit'])) {
             $cargo = $usuario['cargo'];
 
             if ($cargo == 1) {
-                header('Location: ../inicioAdm.php?login=success');
+                header('Location: ../inicioAdmin/inicioAdm.php?login=success');
                 exit();
             } else {
                 header('Location: ../index.php?login=success');

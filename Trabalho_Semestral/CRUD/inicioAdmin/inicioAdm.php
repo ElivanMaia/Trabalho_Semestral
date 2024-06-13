@@ -1,5 +1,5 @@
 <?php
-include 'verify/conexao.php';
+include '../verify/conexao.php';
 
 try {
     $sql = "SELECT COUNT(*) AS total_agendamentos FROM agendamentos";
@@ -35,7 +35,6 @@ try {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #a0a0a0;
             overflow: hidden;
         }
 
@@ -44,6 +43,7 @@ try {
             padding: 0 15px;
             overflow-y: auto;
             height: calc(100vh - 90px);
+            background-color: #9d9d9d;
         }
 
         .card-custom {
@@ -70,23 +70,30 @@ try {
         .table tbody tr:nth-child(even) {
             background-color: #e9ecef;
         }
+        #nick{
+            font-size: 40px;
+            font-weight: bold;
+        }
+        #tabela{
+            border-radius: 10px;
+        }
     </style>
 </head>
 
 <body>
     <?php
-    require('sidebar.php');
+    require('../sidebar.php');
     ?>
 
     <div class="container-fluid main-content">
-        <h2 class="mb-4 text-center">Barba & Navalha</h2>
+        <h2 class="mb-5 mt-3 p-4 fs-40 text-center" id="nick">Barba & Navalha</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
             <div class="col card-custom">
                 <div class="card">
                     <div class="card-header">Agendamentos</div>
                     <div class="card-body">
                         <p class="card-text">Número de Agendamentos: <?php echo $total_agendamentos; ?></p>
-                        <a href="agendamentos/index.php" class="btn btn-primary">Ver Agendamentos</a>
+                        <a href="../agendamentos/index.php" class="btn btn-dark text-white">Ver Agendamentos</a>
                     </div>
                 </div>
             </div>
@@ -96,12 +103,14 @@ try {
                     <div class="card-header">Clientes</div>
                     <div class="card-body">
                         <p class="card-text">Total de Clientes: <?php echo $total_clientes; ?></p>
-                        <a href="clienteLista/index.php" class="btn btn-primary">Ver Lista de Clientes</a>
+                        <a href="../clienteLista/index.php" class="btn btn-dark text-white">Ver Lista de Clientes</a>
                     </div>
                 </div>
             </div>
         </div>
-
+        <br>
+        <br>
+        <div class="container">
         <div class="row mt-4">
             <div class="col">
                 <?php
@@ -128,12 +137,12 @@ try {
                     echo "<div class='container'>";
                     echo "   <div class='row'>";
                     echo "       <div class='col'>";
-                    echo "           <h2 class='text-center fs-5 fw-bold'>Relatório: Top 3 Serviços Mais Agendados</h2>";
+                    echo "           <h2 class='text-center fw-bold' style='font-size: 30px;'>Relatório: Top 3 Serviços Mais Agendados</h2>";
                     echo "       </div>";
                     echo "   </div>";
                     echo "</div>";
                     echo "<div class='table-container'>";
-                    echo "<table class='table table-bordered table-responsive'>";
+                    echo "<span id='tabela'><table class='table table-responsive'></span>";
                     echo "<thead style='color: #808080;'><tr><th>Serviço</th><th>Quantidade de Agendamentos</th><th>Preço Total</th></tr></thead>";
 
                     echo "<tbody>";
@@ -154,6 +163,7 @@ try {
                 ?>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
