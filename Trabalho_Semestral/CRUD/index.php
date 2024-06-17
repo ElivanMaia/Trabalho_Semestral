@@ -86,54 +86,68 @@ try {
             border: none;
         }
 
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .section-title{
+            padding-top: 100px;
         }
+
     </style>
 </head>
 
 <body>
 
-    <?php
-    require('navbar.php');
+<?php require('navbar.php'); ?>
 
-    if (isset($_GET['login']) && $_GET['login'] == 'success'  && !isset($_SESSION['login_success_alerta'])) {
-        echo "<script>
-        Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: 'Bem-Vindo de Volta " . $_SESSION['nome_usuario_cliente'] . "',
-          showConfirmButton: false,
-          timer: 2000
-        });
-        </script>";
-        $_SESSION['login_success_alerta'] = true;
-    }
+<?php
+if (isset($_GET['login']) && $_GET['login'] == 'success' && !isset($_SESSION['login_success_alerta'])) {
+    echo "<script>
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Bem-Vindo de Volta " . $_SESSION['nome_usuario_cliente'] . "',
+      showConfirmButton: false,
+      timer: 2000
+    });
+    </script>";
+    $_SESSION['login_success_alerta'] = true;
+}
 
-    if (isset($_GET['cadastro_success']) && $_GET['cadastro_success'] == '1' && !isset($_SESSION['cadastro_success_alerta'])) {
-        echo "<script>
-        Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: 'Bem-Vindo ao Barba & Navalha " . $_SESSION['nome_usuario_cliente'] . "',
-          showConfirmButton: false,
-          timer: 2000
-        });
-        </script>";
-        $_SESSION['cadastro_success_alerta'] = true;
-    }
+if (isset($_GET['cadastro_success']) && $_GET['cadastro_success'] == '1' && !isset($_SESSION['cadastro_success_alerta'])) {
+    echo "<script>
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Bem-Vindo ao Barba & Navalha " . $_SESSION['nome_usuario_cliente'] . "',
+      showConfirmButton: false,
+      timer: 2000
+    });
+    </script>";
+    $_SESSION['cadastro_success_alerta'] = true;
+}
 
-    if (isset($_GET['agendamento_existente']) && $_GET['agendamento_existente'] == 'true') {
-        echo "<script>
-        Swal.fire({
-          icon: 'error',
-          title: 'Erro',
-          text: 'Você já possui um agendamento pendente!',
-        });
-        </script>";
-    }
-    ?>
+if (isset($_GET['agendamento_existente']) && $_GET['agendamento_existente'] == 'true' && !isset($_SESSION['agendamento_existente_alerta'])) {
+    echo "<script>
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro',
+      text: 'Você já possui um agendamento pendente!',
+    });
+    </script>";
+    $_SESSION['agendamento_existente_alerta'] = true;
+}
+
+if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['agendamento_success_alerta'])) {
+    echo "<script>
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Agendamento realizado com sucesso!',
+      showConfirmButton: false,
+      timer: 2000
+    });
+    </script>";
+    $_SESSION['agendamento_success_alerta'] = true;
+}
+?>
 
     <section id="inicio" class="d-flex justify-content-center align-items-center">
         <div class="container text-center text-white">
@@ -146,7 +160,7 @@ try {
         <div class="container">
             <div class="row text-center">
                 <div class="col">
-                    <h2 class="pb-2 section-title">Equipe</h2>
+                    <h2 class="section-title">Equipe</h2>
                     <p class="pb-4" style="font-size: 18px;">Conheça a nossa equipe de profissionais qualificados e experientes.</p>
                 </div>
             </div>
@@ -184,87 +198,118 @@ try {
 
 
     <section id="servicos" class="py-5">
-        <div class="container pt-4">
-            <h1 class="section-title text-center mb-4 py-4 text-white">Nossos Serviços</h1>
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 py-4 g-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-scissors"></i>Corte de Cabelo</h4>
-                            <p class="card-text">R$30.00</p>
+    <div class="container pt-5">
+        <h1 class="section-title text-center mb-4 py-4 text-white">Nossos Serviços</h1>
+        <div id="carouselServicos" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/cabeloMasc.jpg" class="card-img-top" alt="Corte de Cabelo">
+                                <div class="card-body">
+                                    <h4 class="card-title">Corte de Cabelo</h4>
+                                    <p class="card-text">R$30.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/cabeloBarba.jpg" class="card-img-top" alt="Corte de Cabelo + Barba">
+                                <div class="card-body">
+                                    <h4 class="card-title">Corte de Cabelo + Barba</h4>
+                                    <p class="card-text">R$40.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/barboterapia.jpg" class="card-img-top" alt="Barboterapia">
+                                <div class="card-body">
+                                    <h4 class="card-title">Barboterapia</h4>
+                                    <p class="card-text">R$25.00</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-person-badge"></i>Corte de Cabelo + Barba</h4>
-                            <p class="card-text">R$40.00</p>
+                <div class="carousel-item">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/pigmentBarba.jpg" class="card-img-top" alt="Pigmentação de Barba">
+                                <div class="card-body">
+                                    <h4 class="card-title">Pigmentação de Barba</h4>
+                                    <p class="card-text">R$35.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/relaxCapilar.jpg" class="card-img-top" alt="Relaxamento Capilar">
+                                <div class="card-body">
+                                    <h4 class="card-title">Relaxamento Capilar</h4>
+                                    <p class="card-text">R$40.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/progressiva.jpg" class="card-img-top" alt="Progressiva">
+                                <div class="card-body">
+                                    <h4 class="card-title">Progressiva</h4>
+                                    <p class="card-text">R$50.00</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-emoji-smile"></i>Barboterapia</h4>
-                            <p class="card-text">R$25.00</p>
+                <div class="carousel-item">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/designSobran.jpg" class="card-img-top" alt="Design de Sobrancelhas">
+                                <div class="card-body">
+                                    <h4 class="card-title">Design de Sobrancelhas</h4>
+                                    <p class="card-text">R$15.00</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-droplet"></i>Pigmentação de Barba</h4>
-                            <p class="card-text">R$35.00</p>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/limpezaMasc.jpg" class="card-img-top" alt="Limpeza de Pele">
+                                <div class="card-body">
+                                    <h4 class="card-title">Limpeza de Pele</h4>
+                                    <p class="card-text">R$30.00</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-house-door"></i>Relaxamento Capilar</h4>
-                            <p class="card-text">R$40.00</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-brush"></i>Progressiva</h4>
-                            <p class="card-text">R$50.00</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-eyeglasses"></i>Design de Sobrancelhas</h4>
-                            <p class="card-text">R$15.00</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-stars"></i>Limpeza de Pele</h4>
-                            <p class="card-text">R$30.00</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="bi bi-droplet-half"></i>Hidratação</h4>
-                            <p class="card-text">R$30.00</p>
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="images/hidratacao.jpg" class="card-img-top" alt="Hidratação">
+                                <div class="card-body">
+                                    <h4 class="card-title">Hidratação</h4>
+                                    <p class="card-text">R$30.00</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselServicos" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselServicos" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-    </section>
+    </div>
+</section>
 
     <section id="horarios" class="py-5 section-dark-bg">
-        <div class="container pt-4">
+        <div class="container pt-5">
             <h2 class="section-title text-center mb-4 py-4 text-white">Datas e Horários de Agendamento</h2>
             <div class="row">
                 <div class="col-md-6">
@@ -419,23 +464,6 @@ try {
     <script>
         $(document).ready(function() {
             $('#editarModal').modal('show');
-        });
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const successParam = urlParams.get('success');
-            const alertShown = localStorage.getItem('alertShown');
-
-            if (successParam === 'true' && !alertShown) {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Agendamento realizado com sucesso!',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
-                localStorage.setItem('alertShown', 'true');
-            }
         });
     </script>
 

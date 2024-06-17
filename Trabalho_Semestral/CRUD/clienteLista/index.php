@@ -2,54 +2,11 @@
 session_start();
 
 if (!isset($_SESSION['usuario_id'])) {
-    header("Location: ../login/login.html");
+    header("Location: ../login/login.php");
     exit();
 }
 
 include '../verify/conexao.php';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    try {
-        if (isset($_POST['id_cliente'])) {
-            $sql = "UPDATE usuarios SET 
-                        nome = :nome, 
-                        email = :email, 
-                        senha = :senha 
-                    WHERE id = :id_cliente";
-
-            $stmt = $conn->prepare($sql);
-
-            $stmt->bindParam(':nome', $_POST['nome_usuario']);
-            $stmt->bindParam(':email', $_POST['email']);
-            $stmt->bindParam(':senha', $_POST['senha']);
-            $stmt->bindParam(':id_cliente', $_POST['id_cliente']);
-
-            $stmt->execute();
-
-            header("Location: {$_SERVER['PHP_SELF']}?atualizacao=sucesso");
-            exit();
-        } else {
-            $sql = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
-
-            $stmt = $conn->prepare($sql);
-
-            $nome = $_POST['nome'];
-            $email = $_POST['email'];
-            $senha = $_POST['senha'];
-
-            $stmt->bindParam(':nome', $nome);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':senha', $senha);
-
-            $stmt->execute();
-
-            header("Location: {$_SERVER['PHP_SELF']}?insercao=sucesso");
-            exit();
-        }
-    } catch (PDOException $e) {
-        echo "Erro: " . $e->getMessage();
-    }
-}
 
 try {
     $sql = "SELECT id, nome, email, senha FROM usuarios WHERE cargo = 0";
@@ -92,8 +49,6 @@ try {
 $conn = null;
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -102,13 +57,22 @@ $conn = null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Listar Clientes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link rel="stylesheet" href="node_modules/parsleyjs/src/parsley.css">
     <style>
-        .main-content {
-            padding-top: 150px;
-            padding-bottom: 20px;
+        body {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container-box {
+            background-color: #f8f9fa;
+            padding: 40px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            margin-top: 100px;
         }
 
         .table-responsive {
@@ -118,6 +82,11 @@ $conn = null;
         .table th {
             background-color: #343a40;
             color: #fff;
+            font-weight: bold;
+        }
+
+        .table td {
+            vertical-align: middle;
         }
 
         .divider {
@@ -129,58 +98,53 @@ $conn = null;
 <body>
 
     <?php
-        error_reporting(0);
-        ini_set('display_errors', 0);
-        require('../sidebar.php');
+    error_reporting(0);
+    ini_set('display_errors', 0);
+    require('../sidebar.php');
     ?>
 
-        <div class="container">
-    <div class="main-content position-relative">
-        <div class=" justify-content-between align-items-center mb-4">
-            <h2 class="mb-0 text-center">Lista de Clientes</h2>
-        </div>
-        <div class="card-body">
-            <h5 class="card-text text-center">Número de Clientes: <?php echo $total_clientes; ?></h5>
-        </div>
-        <br>
-        <hr class="divider">
-        <br>
-        <div class="container-fluid">
-            <div class="table-responsive">
+<div class="container-fluid py-4">
+        <div class="container-box">
+            <h2 class="mb-4 text-center">Lista de Clientes</h2>
+            <div class="card-body">
+                <h5 class="card-text text-center">Número de Clientes: <?php echo $total_clientes; ?></h5>
+            </div>
+            <br>
+            <hr class="divider">
+            <br>
+
+            <div class="table-responsive scroll-container">
                 <table class="table table-hover table-striped">
                     <thead class="thead-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($clientes as $cliente) : ?>
-                            <tr>
-                                <td><?php echo $cliente['id']; ?></td>
-                                <td><?php echo $cliente['nome']; ?></td>
-                                <td><?php echo $cliente['email']; ?></td>
-                                <td>
-
-                                    <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $cliente['id']; ?>)">Excluir</button>
-                                </td>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Ações</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($clientes as $cliente) : ?>
+                                <tr>
+                                    <td><?php echo $cliente['id']; ?></td>
+                                    <td><?php echo $cliente['nome']; ?></td>
+                                    <td><?php echo $cliente['email']; ?></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-excluir" onclick="confirmarExclusao(<?php echo $cliente['id']; ?>)">Excluir</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <script src="node_modules/parsleyjs/dist/parsley.min.js"></script>
-    <script src="node_modules/parsleyjs/dist/i18n/pt-br.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         function confirmarSairConta() {
@@ -231,29 +195,6 @@ $conn = null;
                     );
                 }
             });
-        }
-
-
-        function mostrarsenha() {
-            var senha = document.getElementById("senha");
-            if (senha.type === "password") {
-                senha.type = "text";
-            } else {
-                senha.type = "password";
-            }
-        }
-
-        function mostrar(idCampoSenha) {
-            var senha = document.getElementById(idCampoSenha);
-            var checkbox = document.getElementById("mostrarSenhaCadastro");
-
-            if (senha.type === "password") {
-                senha.type = "text";
-                checkbox.checked = true;
-            } else {
-                senha.type = "password";
-                checkbox.checked = false;
-            }
         }
     </script>
 </body>

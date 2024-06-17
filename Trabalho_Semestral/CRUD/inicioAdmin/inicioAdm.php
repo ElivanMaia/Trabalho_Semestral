@@ -43,7 +43,7 @@ try {
             padding: 0 15px;
             overflow-y: auto;
             height: calc(100vh - 90px);
-            background-color: #9d9d9d;
+            background-color: #f0f0f0;
         }
 
         .card-custom {

@@ -12,35 +12,41 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['id'])) {
     $id_usuario = $_GET['id'];
 
     try {
-        $sql = "SELECT * FROM usuarios WHERE id = :id_usuario";
-        $resultado = $conn->prepare($sql);
-        $resultado->bindParam(':id_usuario', $id_usuario);
-        $resultado->execute();
-        $usuario = $resultado->fetch();
-    } catch (PDOException $e) {
-        echo "Erro ao buscar o usuário: " . $e->getMessage();
-        exit();
-    }
+        $conn->beginTransaction();
 
-    if (!$usuario) {
-        echo "Usuário não encontrado.";
-        exit();
-    }
+        $sqlAgendamentos = "DELETE FROM agendamentos WHERE id_usuario = :id_usuario";
+        $stmtAgendamentos = $conn->prepare($sqlAgendamentos);
+        $stmtAgendamentos->bindParam(':id_usuario', $id_usuario);
+        $stmtAgendamentos->execute();
 
-    try {
-        $sql = "DELETE FROM usuarios WHERE id = :id_usuario";
-        $resultado = $conn->prepare($sql);
-        $resultado->bindParam(':id_usuario', $id_usuario);
-        $resultado->execute();
+        $sqlUsuario = "SELECT * FROM usuarios WHERE id = :id_usuario";
+        $stmtUsuario = $conn->prepare($sqlUsuario);
+        $stmtUsuario->bindParam(':id_usuario', $id_usuario);
+        $stmtUsuario->execute();
+        $usuario = $stmtUsuario->fetch();
 
-        if ($resultado->rowCount() > 0) {
-            echo "Usuário excluído com sucesso.";
+        if (!$usuario) {
+            echo "Usuário não encontrado.";
+            $conn->rollBack();
+            exit();
+        }
+
+        $sqlDeleteUsuario = "DELETE FROM usuarios WHERE id = :id_usuario";
+        $stmtDeleteUsuario = $conn->prepare($sqlDeleteUsuario);
+        $stmtDeleteUsuario->bindParam(':id_usuario', $id_usuario);
+        $stmtDeleteUsuario->execute();
+
+        $conn->commit();
+
+        if ($stmtDeleteUsuario->rowCount() > 0) {
+            echo "Usuário e seus agendamentos foram excluídos com sucesso.";
         } else {
             echo "Erro ao excluir o usuário.";
         }
 
     } catch (PDOException $e) {
-        echo "Erro ao excluir o usuário: " . $e->getMessage();
+        $conn->rollBack();
+        echo "Erro ao excluir o usuário e seus agendamentos: " . $e->getMessage();
         exit();
     }
 

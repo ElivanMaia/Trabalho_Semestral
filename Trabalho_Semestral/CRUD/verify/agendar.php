@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $resultado->bindParam(':referencia', $referencia);
 
         if ($resultado->execute()) {
-            header("Location: ../index.php?success=true#agendar");
+            header("Location: ../index.php?success=true");
             exit();
         } else {
             echo "Erro na inserção do agendamento.";

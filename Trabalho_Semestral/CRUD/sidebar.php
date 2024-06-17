@@ -8,6 +8,7 @@ if (!isset($_SESSION['usuario_id'])) {
 
 include 'verify/conexao.php';
 
+// Verifica e atribui nome do usuário à sessão se ainda não estiver definido
 if (!isset($_SESSION['nome_usuario'])) {
     try {
         $sql = "SELECT nome FROM usuarios WHERE id = :usuario_id AND cargo = 1";
@@ -16,11 +17,7 @@ if (!isset($_SESSION['nome_usuario'])) {
         $stmt->execute();
         $row = $stmt->fetch();
 
-        if ($row) {
-            $_SESSION['nome_usuario'] = $row['nome'];
-        } else {
-            $_SESSION['nome_usuario'] = "Nome do Usuário";
-        }
+        $_SESSION['nome_usuario'] = $row ? $row['nome'] : "Nome do Usuário";
     } catch (PDOException $e) {
         echo "Erro na consulta: " . $e->getMessage();
         exit();
@@ -35,8 +32,10 @@ if (!isset($_SESSION['nome_usuario'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Inicio</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+
     <style>
         body {
             height: 100vh;
@@ -78,7 +77,7 @@ if (!isset($_SESSION['nome_usuario'])) {
             background-color: #343a40;
             padding: 0.5rem 1rem 0;
             transition: left 0.3s;
-            z-index: 100;
+            z-index: 100; /* Ajustado para 99 para ficar abaixo do modal */
         }
 
         .nav {
@@ -109,13 +108,14 @@ if (!isset($_SESSION['nome_usuario'])) {
             font-size: 1.25rem;
         }
 
-        .show {
+        .l-navbar-show {
             left: 0 !important;
             z-index: 101;
         }
 
         .body-pd {
             padding-left: 250px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
         .body-pd .header {
@@ -165,12 +165,12 @@ if (!isset($_SESSION['nome_usuario'])) {
         <div class="header_toggle"> <i class='bi bi-list' id="header-toggle"></i> </div>
     </header>
 
-    <div class="l-navbar show" id="nav-bar">
+    <div class="l-navbar l-navbar-show" id="nav-bar">
         <nav class="nav">
             <div style="margin-top: 30px;">
                 <img src="../images/logoReal.png" alt="Logo da Barbearia" class="img-fluid mb-4" style="width: auto; max-height: 110px;">
                 <div class="nav_list">
-                    <a href="../inicioAdmin/inicioAdm" class="nav_link active">
+                    <a href="../inicioAdmin/inicioAdm.php" class="nav_link active">
                         <i class='bi bi-house-door nav_icon'></i>
                         <span class="nav_name">Início</span>
                     </a>
@@ -193,10 +193,6 @@ if (!isset($_SESSION['nome_usuario'])) {
                             <?php echo $_SESSION['nome_usuario']; ?>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
                             <li><a class="dropdown-item" href="#" onclick="SairConta(event)">Sair</a></li>
                         </ul>
                     </div>
@@ -205,10 +201,7 @@ if (!isset($_SESSION['nome_usuario'])) {
         </nav>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", function(event) {
             const toggle = document.getElementById('header-toggle');
@@ -221,35 +214,29 @@ if (!isset($_SESSION['nome_usuario'])) {
                     body.classList.toggle('body-no-pd');
                 });
             }
+
+            function SairConta(event) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Tem certeza?',
+                    text: 'Você realmente deseja sair da conta?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, sair',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'verify/logout.php';
+                    } else {
+                        console.log('Operação de saída da conta cancelada pelo usuário.');
+                    }
+                });
+            }
         });
-
-        function SairConta(event) {
-    event.preventDefault();
-    Swal.fire({
-        title: 'Tem certeza?',
-        text: 'Você realmente deseja sair da conta?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sim, sair',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = 'verify/logout.php';
-        } else {
-            console.log('Operação de saída da conta cancelada pelo usuário.');
-        }
-    });
-}
-
-
-if (window.innerWidth <= 768) {
-    nav.classList.remove('show');
-    body.classList.add('body-no-pd');
-}
-</script>
+    </script>
 
 </body>
 

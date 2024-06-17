@@ -84,7 +84,6 @@ try {
     echo "Erro na consulta: " . $e->getMessage();
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -95,13 +94,22 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Agendamentos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link rel="stylesheet" href="node_modules/parsleyjs/src/parsley.css">
     <style>
-        .main-content {
-            padding-top: 150px;
-            padding-bottom: 20px;
+         body {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .container-box {
+            background-color: #f8f9fa;
+            padding: 40px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            margin-top: 100px;
         }
 
         .table-responsive {
@@ -126,24 +134,22 @@ try {
 
 <body>
 
-    <?php
+<?php
     error_reporting(0);
     ini_set('display_errors', 0);
+
     require('../sidebar.php');
     ?>
 
-    
-
-    <div class="container main-content position-relative">
-        <div class="justify-content-between align-items-center mb-4">
-            <h2 class="mb-0 text-center">Agendamentos</h2>
-        </div>
-        <div class="card-body">
-            <h5 class="card-text text-center">Número de Agendamentos: <?php echo $total_agendamentos; ?></h5>
-        </div>
-        <br>
-        <hr class="divider">
-        <br>
+    <div class="container-fluid py-4">
+        <div class="container-box">
+            <h2 class="mb-4 text-center">Agendamentos</h2>
+            <div class="card-body">
+                <h5 class="card-text text-center">Número de Agendamentos: <?php echo $total_agendamentos; ?></h5>
+            </div>
+            <br>
+            <hr class="divider">
+            <br>
 
             <div class="table-responsive scroll-container">
                 <table class="table table-hover table-striped">
@@ -172,8 +178,7 @@ try {
                                 <td><?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td>
-                                    <button type="button" class="btn btn-warning me-2" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-nome="<?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?>" data-telefone="<?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?>" data-horario="<?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?>" data-corte="<?php echo htmlspecialchars($agendamento['id_corte'], ENT_QUOTES, 'UTF-8'); ?>" data-observacoes="<?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?>" data-referencia="<?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
-
+                                    <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarModal" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-horario="<?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?>" data-corte="<?php echo htmlspecialchars($agendamento['id_corte'], ENT_QUOTES, 'UTF-8'); ?>" data-observacoes="<?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?>" data-referencia="<?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
                                     <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $agendamento['id_agendamento']; ?>)">Excluir</button>
                                 </td>
                             </tr>
@@ -184,7 +189,7 @@ try {
         </div>
     </div>
 
-    <div class="modal fade" id="editarModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -215,7 +220,7 @@ try {
                         </div>
                         <div class="mb-3">
                             <label for="observacoes" class="form-label">Observações</label>
-                            <textarea class="form-control" id="observacoes" name="observacoes"></textarea>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="referencia" class="form-label">Referência</label>
@@ -224,72 +229,35 @@ try {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-warning">Salvar</button>
+                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <script src="node_modules/parsleyjs/dist/parsley.min.js"></script>
-    <script src="node_modules/parsleyjs/dist/i18n/pt-br.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        function editarAgendamento(button) {
-            const id = button.getAttribute('data-id');
-            const horario = button.getAttribute('data-horario');
-            const corte = button.getAttribute('data-corte');
-            const observacoes = button.getAttribute('data-observacoes');
-            const referencia = button.getAttribute('data-referencia');
 
-            document.getElementById('id_agendamento').value = id;
-            document.getElementById('horario_agendamento').value = horario;
-            document.getElementById('id_corte').value = corte;
+        function editarAgendamento(button) {
+            var id_agendamento = button.getAttribute('data-id');
+            var horario_agendamento = button.getAttribute('data-horario');
+            var id_corte = button.getAttribute('data-corte');
+            var observacoes = button.getAttribute('data-observacoes');
+            var referencia = button.getAttribute('data-referencia');
+
+            document.getElementById('id_agendamento').value = id_agendamento;
+            document.getElementById('horario_agendamento').value = horario_agendamento;
+            document.getElementById('id_corte').value = id_corte;
             document.getElementById('observacoes').value = observacoes;
             document.getElementById('referencia').value = referencia;
 
-            var editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
-            editarModal.show();
+            $('#editarModal').modal('show');
         }
-
-        $(document).ready(function() {
-            $('#formEditarAgendamento').on('submit', function(event) {
-                event.preventDefault();
-
-                const formData = new FormData(this);
-                $.ajax({
-                    url: '',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Sucesso!',
-                            text: 'Agendamento atualizado com sucesso.',
-                            icon: 'success'
-                        }).then(() => {
-                            var editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
-                            editarModal.hide();
-
-                            window.location.reload();
-                        });
-                    },
-                    error: function() {
-                        Swal.fire({
-                            title: 'Erro!',
-                            text: 'Ocorreu um erro ao atualizar o agendamento.',
-                            icon: 'error'
-                        });
-                    }
-                });
-            });
-        });
 
         function confirmarExclusao(id) {
             Swal.fire({
@@ -321,6 +289,7 @@ try {
             });
         }
 
+
         function confirmarSairConta() {
             Swal.fire({
                 title: 'Tem certeza?',
@@ -342,7 +311,6 @@ try {
 
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
-
             const atualizacao = urlParams.get('atualizacao');
 
             if (atualizacao === 'sucesso') {
