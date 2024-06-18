@@ -85,86 +85,93 @@ try {
     require('../sidebar.php');
     ?>
 
-    <div class="container-fluid main-content">
-        <h2 class="mb-5 mt-3 p-4 fs-40 text-center" id="nick">Barba & Navalha</h2>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-            <div class="col card-custom">
-                <div class="card">
-                    <div class="card-header">Agendamentos</div>
-                    <div class="card-body">
-                        <p class="card-text">Número de Agendamentos: <?php echo $total_agendamentos; ?></p>
-                        <a href="../agendamentos/index.php" class="btn btn-dark text-white">Ver Agendamentos</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col card-custom">
-                <div class="card">
-                    <div class="card-header">Clientes</div>
-                    <div class="card-body">
-                        <p class="card-text">Total de Clientes: <?php echo $total_clientes; ?></p>
-                        <a href="../clienteLista/index.php" class="btn btn-dark text-white">Ver Lista de Clientes</a>
-                    </div>
+<div class="container-fluid main-content">
+    <h2 class="mb-5 mt-3 p-4 fs-40 text-center" id="nick">Barba & Navalha</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        <div class="col card-custom">
+            <div class="card custom-card">
+                <div class="card-header">Agendamentos</div>
+                <div class="card-body">
+                    <p class="card-text">Número de Agendamentos: <?php echo $total_agendamentos; ?></p>
+                    <a href="../agendamentos/index.php" class="btn btn-dark text-white">Ver Agendamentos</a>
                 </div>
             </div>
         </div>
+
+        <div class="col card-custom">
+            <div class="card custom-card">
+                <div class="card-header">Clientes</div>
+                <div class="card-body">
+                    <p class="card-text">Total de Clientes: <?php echo $total_clientes; ?></p>
+                    <a href="../clienteLista/index.php" class="btn btn-dark text-white">Ver Lista de Clientes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
         <br>
         <br>
         <div class="container">
-        <div class="row mt-4">
-            <div class="col">
-                <?php
-                try {
-                    $sqlMaisPedidos = "SELECT 
-                                        c.nome AS nome_servico, 
-                                        COUNT(*) AS quantidade_agendamentos,
-                                        SUM(c.preco) AS preco_total
-                                    FROM 
-                                        agendamentos a 
-                                    JOIN 
-                                        cortes c ON a.id_corte = c.id 
-                                    GROUP BY 
-                                        a.id_corte 
-                                    ORDER BY 
-                                        COUNT(*) DESC 
-                                    LIMIT 3";
+    <div class="row mt-4">
+        <div class="col">
+            <?php
+            try {
+                $sqlMaisPedidos = "SELECT 
+                                    c.nome AS nome_servico, 
+                                    COUNT(*) AS quantidade_agendamentos,
+                                    SUM(c.preco) AS preco_total
+                                FROM 
+                                    agendamentos a 
+                                JOIN 
+                                    cortes c ON a.id_corte = c.id 
+                                GROUP BY 
+                                    a.id_corte 
+                                ORDER BY 
+                                    COUNT(*) DESC 
+                                LIMIT 3";
 
-                    $stmtMaisPedidos = $conn->prepare($sqlMaisPedidos);
-                    $stmtMaisPedidos->execute();
-                    $resultadosMaisPedidos = $stmtMaisPedidos->fetchAll();
+                $stmtMaisPedidos = $conn->prepare($sqlMaisPedidos);
+                $stmtMaisPedidos->execute();
+                $resultadosMaisPedidos = $stmtMaisPedidos->fetchAll();
 
-                    echo "<br> . <br>";
-                    echo "<div class='container'>";
-                    echo "   <div class='row'>";
-                    echo "       <div class='col'>";
-                    echo "           <h2 class='text-center fw-bold' style='font-size: 30px;'>Relatório: Top 3 Serviços Mais Agendados</h2>";
-                    echo "       </div>";
-                    echo "   </div>";
+                echo "<br> . <br>";
+                echo "<div class='container'>";
+                echo "   <div class='row'>";
+                echo "       <div class='col'>";
+                echo "           <h2 class='text-center fw-bold' style='font-size: 30px;'>Relatório: Top 3 Serviços Mais Agendados</h2>";
+                echo "       </div>";
+                echo "   </div>";
+                echo "</div>";
+                
+                if (empty($resultadosMaisPedidos)) {
+                    echo "<div class='alert alert-warning text-center' role='alert'>";
+                    echo "    <span style='font-weight: bold; font-size: 1.5em;'>Nenhum agendamento para ser relatado</span>";
                     echo "</div>";
+                } else {
                     echo "<div class='table-container'>";
-                    echo "<span id='tabela'><table class='table table-responsive'></span>";
-                    echo "<thead style='color: #808080;'><tr><th>Serviço</th><th>Quantidade de Agendamentos</th><th>Preço Total</th></tr></thead>";
-
-                    echo "<tbody>";
+                    echo "    <table class='table table-responsive'>";
+                    echo "        <thead style='color: #808080;'><tr><th>Serviço</th><th>Quantidade de Agendamentos</th><th>Preço Total</th></tr></thead>";
+                    echo "        <tbody>";
                     foreach ($resultadosMaisPedidos as $resultado) {
                         echo "<tr>";
-                        echo "<td>" . $resultado['nome_servico'] . "</td>";
-                        echo "<td>" . $resultado['quantidade_agendamentos'] . "</td>";
+                        echo "<td>" . htmlspecialchars($resultado['nome_servico'], ENT_QUOTES, 'UTF-8') . "</td>";
+                        echo "<td>" . htmlspecialchars($resultado['quantidade_agendamentos'], ENT_QUOTES, 'UTF-8') . "</td>";
                         echo "<td>R$ " . number_format($resultado['preco_total'], 2, ',', '.') . "</td>";
                         echo "</tr>";
                     }
-                    echo "</tbody>";
-                    echo "</table>";
+                    echo "        </tbody>";
+                    echo "    </table>";
                     echo "</div>";
-                } catch (PDOException $e) {
-                    echo "Erro na consulta: " . $e->getMessage();
-                    exit();
                 }
-                ?>
-            </div>
+            } catch (PDOException $e) {
+                echo "Erro na consulta: " . $e->getMessage();
+                exit();
+            }
+            ?>
         </div>
     </div>
-    </div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

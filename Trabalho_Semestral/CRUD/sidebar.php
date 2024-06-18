@@ -77,7 +77,7 @@ if (!isset($_SESSION['nome_usuario'])) {
             background-color: #343a40;
             padding: 0.5rem 1rem 0;
             transition: left 0.3s;
-            z-index: 100; /* Ajustado para 99 para ficar abaixo do modal */
+            z-index: 100;
         }
 
         .nav {
@@ -187,56 +187,57 @@ if (!isset($_SESSION['nome_usuario'])) {
                 <hr style="border-color: white;">
                 <br>
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="../images/perfil.png" alt="Imagem de Perfil" class="img-fluid me-2" style="width: 50px;">
-                            <?php echo $_SESSION['nome_usuario']; ?>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li><a class="dropdown-item" href="#" onclick="SairConta(event)">Sair</a></li>
-                        </ul>
-                    </div>
+                <div class="dropdown">
+    <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="../images/perfil.png" alt="Imagem de Perfil" class="img-fluid me-2" style="width: 50px;">
+        <?php echo $_SESSION['nome_usuario']; ?>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="#" onclick="SairConta(event)">Sair</a></li>
+    </ul>
+</div>
+
                 </div>
             </div>
         </nav>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function(event) {
-            const toggle = document.getElementById('header-toggle');
-            const nav = document.getElementById('nav-bar');
-            const body = document.querySelector('body');
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+        const toggle = document.getElementById('header-toggle');
+        const nav = document.getElementById('nav-bar');
+        const body = document.querySelector('body');
 
-            if (toggle && nav && body) {
-                toggle.addEventListener('click', () => {
-                    nav.classList.toggle('nav-hidden');
-                    body.classList.toggle('body-no-pd');
-                });
-            }
+        if (toggle && nav && body) {
+            toggle.addEventListener('click', () => {
+                nav.classList.toggle('nav-hidden');
+                body.classList.toggle('body-no-pd');
+            });
+        }
+    });
 
-            function SairConta(event) {
-                event.preventDefault();
-                Swal.fire({
-                    title: 'Tem certeza?',
-                    text: 'Você realmente deseja sair da conta?',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sim, sair',
-                    cancelButtonText: 'Cancelar',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'verify/logout.php';
-                    } else {
-                        console.log('Operação de saída da conta cancelada pelo usuário.');
-                    }
-                });
+    function SairConta(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Você realmente deseja sair da conta?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, sair',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '../verify/logout.php';
+            } else {
+                console.log('Operação de saída da conta cancelada pelo usuário.');
             }
         });
-    </script>
+    }
+</script>
 
 </body>
 

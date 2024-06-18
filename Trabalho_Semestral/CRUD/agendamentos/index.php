@@ -11,15 +11,11 @@ include '../verify/conexao.php';
 try {
     $sql = "SELECT nome FROM usuarios WHERE id = :usuario_id";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':usuario_id', $_SESSION['usuario_id']);
+    $stmt->bindParam(':usuario_id', $_SESSION['usuario_id'], PDO::PARAM_INT);
     $stmt->execute();
-    $row = $stmt->fetch();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($row) {
-        $nomeUsuario = $row['nome'];
-    } else {
-        $nomeUsuario = "Nome do Usuário";
-    }
+    $nomeUsuario = $row ? $row['nome'] : "Nome do Usuário";
 
     $sql = "SELECT 
                 a.id AS id_agendamento,
@@ -37,10 +33,9 @@ try {
                 usuarios u ON a.id_usuario = u.id
             JOIN 
                 cortes c ON a.id_corte = c.id";
-
     $stmt = $conn->prepare($sql);
     $stmt->execute();
-    $agendamentos = $stmt->fetchAll();
+    $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Erro na consulta: " . $e->getMessage();
     exit();
@@ -55,17 +50,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         observacoes = :observacoes, 
                         referencia = :referencia 
                     WHERE id = :id_agendamento";
-
             $stmt = $conn->prepare($sql);
-
-            $stmt->bindParam(':horario', $_POST['horario_agendamento']);
-            $stmt->bindParam(':servico', $_POST['id_corte']);
-            $stmt->bindParam(':observacoes', $_POST['observacoes']);
-            $stmt->bindParam(':referencia', $_POST['referencia']);
-            $stmt->bindParam(':id_agendamento', $_POST['id_agendamento']);
-
+            $stmt->bindParam(':horario', $_POST['horario_agendamento'], PDO::PARAM_STR);
+            $stmt->bindParam(':servico', $_POST['id_corte'], PDO::PARAM_INT);
+            $stmt->bindParam(':observacoes', $_POST['observacoes'], PDO::PARAM_STR);
+            $stmt->bindParam(':referencia', $_POST['referencia'], PDO::PARAM_STR);
+            $stmt->bindParam(':id_agendamento', $_POST['id_agendamento'], PDO::PARAM_INT);
             $stmt->execute();
-
             header("Location: ../agendamentos/index.php?atualizacao=sucesso");
             exit();
         } catch (PDOException $e) {
@@ -78,7 +69,7 @@ try {
     $sql = "SELECT COUNT(*) AS total_agendamentos FROM agendamentos";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
-    $row = $stmt->fetch();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $total_agendamentos = $row["total_agendamentos"];
 } catch (PDOException $e) {
     echo "Erro na consulta: " . $e->getMessage();
@@ -97,7 +88,7 @@ try {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
     <link rel="stylesheet" href="node_modules/parsleyjs/src/parsley.css">
     <style>
-         body {
+        body {
             background-color: #f0f0f0;
             color: #333;
         }
@@ -134,10 +125,7 @@ try {
 
 <body>
 
-<?php
-    error_reporting(0);
-    ini_set('display_errors', 0);
-
+    <?php
     require('../sidebar.php');
     ?>
 
@@ -152,186 +140,189 @@ try {
             <br>
 
             <div class="table-responsive scroll-container">
-                <table class="table table-hover table-striped">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Cliente</th>
-                            <th>Telefone</th>
-                            <th>Horário</th>
-                            <th>Serviço</th>
-                            <th>Preço</th>
-                            <th>Observações</th>
-                            <th>Referência</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($agendamentos as $agendamento) : ?>
+                <?php if (empty($agendamentos)) : ?>
+                    <div class="alert alert-warning text-center" role="alert">
+                        <span style="font-weight: bold;">NENHUM AGENDAMENTO CADASTRADO</span>
+                    </div>
+                <?php else : ?>
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
                             <tr>
-                                <td><?php echo htmlspecialchars($agendamento['id_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($agendamento['telefone_cliente'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($agendamento['nome_corte'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>R$ <?php echo number_format($agendamento['preco_corte'], 2, ',', '.'); ?></td>
-                                <td><?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>
-                                    <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarModal" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-horario="<?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?>" data-corte="<?php echo htmlspecialchars($agendamento['id_corte'], ENT_QUOTES, 'UTF-8'); ?>" data-observacoes="<?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?>" data-referencia="<?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
-                                    <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $agendamento['id_agendamento']; ?>)">Excluir</button>
-                                </td>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Telefone</th>
+                                <th>Horário</th>
+                                <th>Serviço</th>
+                                <th>Preço</th>
+                                <th>Observações</th>
+                                <th>Referência</th>
+                                <th>Ações</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($agendamentos as $agendamento) : ?>
+                                <tr>
+                                    <td><?php echo $agendamento['id_agendamento']; ?></td>
+                                    <td><?php echo $agendamento['nome_usuario']; ?></td>
+                                    <td><?php echo $agendamento['telefone_cliente']; ?></td>
+                                    <td><?php echo $agendamento['horario_agendamento']; ?></td>
+                                    <td><?php echo $agendamento['nome_corte']; ?></td>
+                                    <td>R$ <?php echo number_format($agendamento['preco_corte'], 2, ',', '.'); ?></td>
+                                    <td><?php echo $agendamento['observacoes']; ?></td>
+                                    <td><?php echo $agendamento['referencia']; ?></td>
+                                    <td>
+                                        <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#editarModal" onclick="editarAgendamento(this)" data-id="<?php echo $agendamento['id_agendamento']; ?>" data-horario="<?php echo $agendamento['horario_agendamento']; ?>" data-corte="<?php echo $agendamento['id_corte']; ?>" data-observacoes="<?php echo $agendamento['observacoes']; ?>" data-referencia="<?php echo $agendamento['referencia']; ?>">Editar</button>
+                                        <button type="button" class="btn btn-danger" onclick="confirmarExclusao(<?php echo $agendamento['id_agendamento']; ?>)">Excluir</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
             </div>
-        </div>
-    </div>
 
-    <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Editar Agendamento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editarModalLabel">Editar Agendamento</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="formEditarAgendamento" method="POST" action="">
+                            <div class="modal-body">
+                                <input type="hidden" id="id_agendamento" name="id_agendamento">
+                                <div class="mb-3">
+                                    <label for="horario_agendamento" class="form-label">Horário do Agendamento</label>
+                                    <input type="datetime-local" class="form-control" id="horario_agendamento" name="horario_agendamento" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="id_corte" class="form-label">Serviço</label>
+                                    <select class="form-select" id="id_corte" name="id_corte" required>
+                                        <option value="" disabled selected hidden>Selecione o serviço desejado</option>
+                                        <?php
+                                        $sql_servicos = "SELECT id, nome FROM cortes";
+                                        $resultado_servicos = $conn->prepare($sql_servicos);
+                                        $resultado_servicos->execute();
+                                        $cortes = $resultado_servicos->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($cortes as $corte) {
+                                            echo '<option value="' . $corte['id'] . '">' . $corte['nome'] . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+
+                                </div>
+                                <div class="mb-3">
+                                    <label for="observacoes" class="form-label">Observações</label>
+                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="referencia" class="form-label">Referência</label>
+                                    <input type="text" class="form-control" id="referencia" name="referencia">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <form id="formEditarAgendamento" method="POST" action="">
-                    <div class="modal-body">
-                        <input type="hidden" id="id_agendamento" name="id_agendamento">
-                        <div class="mb-3">
-                            <label for="horario_agendamento" class="form-label">Horário do Agendamento</label>
-                            <input type="datetime-local" class="form-control" id="horario_agendamento" name="horario_agendamento" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="id_corte" class="form-label">Serviço</label>
-                            <select class="form-select" id="id_corte" name="id_corte" required>
-                                <option value="" disabled selected hidden>Selecione o serviço desejado</option>
-                                <?php
-                                $sql_servicos = "SELECT id, nome FROM cortes";
-                                $resultado_servicos = $conn->prepare($sql_servicos);
-                                $resultado_servicos->execute();
-                                $cortes = $resultado_servicos->fetchAll();
-                                foreach ($cortes as $corte) {
-                                    echo '<option value="' . htmlspecialchars($corte['id'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($corte['nome'], ENT_QUOTES, 'UTF-8') . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="observacoes" class="form-label">Observações</label>
-                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="referencia" class="form-label">Referência</label>
-                            <input type="text" class="form-control" id="referencia" name="referencia">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-primary">Salvar alterações</button>
-                    </div>
-                </form>
             </div>
-        </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
+            <script>
+                function editarAgendamento(button) {
+                    var id_agendamento = button.getAttribute('data-id');
+                    var horario_agendamento = button.getAttribute('data-horario');
+                    var id_corte = button.getAttribute('data-corte');
+                    var observacoes = button.getAttribute('data-observacoes');
+                    var referencia = button.getAttribute('data-referencia');
 
-        function editarAgendamento(button) {
-            var id_agendamento = button.getAttribute('data-id');
-            var horario_agendamento = button.getAttribute('data-horario');
-            var id_corte = button.getAttribute('data-corte');
-            var observacoes = button.getAttribute('data-observacoes');
-            var referencia = button.getAttribute('data-referencia');
+                    document.getElementById('id_agendamento').value = id_agendamento;
+                    document.getElementById('horario_agendamento').value = horario_agendamento;
+                    document.getElementById('id_corte').value = id_corte;
+                    document.getElementById('observacoes').value = observacoes;
+                    document.getElementById('referencia').value = referencia;
 
-            document.getElementById('id_agendamento').value = id_agendamento;
-            document.getElementById('horario_agendamento').value = horario_agendamento;
-            document.getElementById('id_corte').value = id_corte;
-            document.getElementById('observacoes').value = observacoes;
-            document.getElementById('referencia').value = referencia;
+                    $('#editarModal').modal('show');
+                }
 
-            $('#editarModal').modal('show');
-        }
-
-        function confirmarExclusao(id) {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: "Você não poderá reverter isso!",
-                icon: 'warning',
-                showCancelButton: true,
-                cancelButtonColor: '#3085d6',
-                confirmButtonColor: '#d33',
-                cancelButtonText: 'Cancelar',
-                confirmButtonText: 'Sim, excluir!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Deletado!',
-                        'Seu item foi deletado com sucesso.',
-                        'success'
-                    ).then(() => {
-                        window.location.href = `../verify/deletarAgen.php?id=${id}`;
+                function confirmarExclusao(id) {
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: "Você não poderá reverter isso!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonColor: '#d33',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonText: 'Sim, excluir!',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire(
+                                'Deletado!',
+                                'Seu item foi deletado com sucesso.',
+                                'success'
+                            ).then(() => {
+                                window.location.href = `../verify/deletarAgen.php?id=${id}`;
+                            });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            Swal.fire(
+                                'Cancelado!',
+                                'A exclusão foi cancelada com sucesso.',
+                                'info'
+                            );
+                        }
                     });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire(
-                        'Cancelado!',
-                        'A exclusão foi cancelada com sucesso.',
-                        'info'
-                    );
                 }
-            });
-        }
 
-
-        function confirmarSairConta() {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Você realmente deseja sair da conta?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '../verify/logout.php';
-                } else {
-                    console.log('Operação de saída da conta cancelada pelo usuário.');
+                function confirmarSairConta() {
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: 'Você realmente deseja sair da conta?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, sair',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '../verify/logout.php';
+                        } else {
+                            console.log('Operação de saída da conta cancelada pelo usuário.');
+                        }
+                    });
                 }
-            });
-        }
 
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const atualizacao = urlParams.get('atualizacao');
+                window.onload = function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const atualizacao = urlParams.get('atualizacao');
 
-            if (atualizacao === 'sucesso') {
-                Swal.fire({
-                    title: 'Sucesso!',
-                    text: 'A atualização foi concluída com sucesso!',
-                    icon: 'success'
-                }).then(() => {
-                    window.history.replaceState(null, null, window.location.pathname);
-                });
-            } else if (atualizacao === 'falha') {
-                Swal.fire({
-                    title: 'Erro!',
-                    text: 'Ocorreu um erro durante a atualização.',
-                    icon: 'error'
-                }).then(() => {
-                    window.history.replaceState(null, null, window.location.pathname);
-                });
-            }
-        }
-    </script>
+                    if (atualizacao === 'sucesso') {
+                        Swal.fire({
+                            title: 'Sucesso!',
+                            text: 'A atualização foi concluída com sucesso!',
+                            icon: 'success'
+                        }).then(() => {
+                            window.history.replaceState(null, null, window.location.pathname);
+                        });
+                    } else if (atualizacao === 'falha') {
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Ocorreu um erro durante a atualização.',
+                            icon: 'error'
+                        }).then(() => {
+                            window.history.replaceState(null, null, window.location.pathname);
+                        });
+                    }
+                }
+            </script>
 
 </body>
 

@@ -103,7 +103,7 @@ $conn = null;
     require('../sidebar.php');
     ?>
 
-<div class="container-fluid py-4">
+    <div class="container-fluid py-4">
         <div class="container-box">
             <h2 class="mb-4 text-center">Lista de Clientes</h2>
             <div class="card-body">
@@ -114,9 +114,14 @@ $conn = null;
             <br>
 
             <div class="table-responsive scroll-container">
-                <table class="table table-hover table-striped">
-                    <thead class="thead-dark">
-                        <tr>
+                <?php if (empty($clientes)) : ?>
+                    <div class="alert alert-warning text-center" role="alert">
+                        <span style="font-weight: bold;">NENHUM CLIENTE CADASTRADO</span>
+                    </div>
+                <?php else : ?>
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
                                 <th>ID</th>
                                 <th>Nome</th>
                                 <th>Email</th>
@@ -136,67 +141,66 @@ $conn = null;
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
+                <?php endif; ?>
             </div>
-        </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        function confirmarSairConta() {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Você realmente deseja sair da conta?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '../verify/logout.php';
-                } else {
-                    console.log('Operação de saída da conta cancelada pelo usuário.');
-                }
-            });
-        }
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        function confirmarExclusao(id) {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: "Você não poderá reverter isso!",
-                icon: 'warning',
-                showCancelButton: true,
-                cancelButtonColor: '#3085d6',
-                confirmButtonColor: '#d33',
-                cancelButtonText: 'Cancelar',
-                confirmButtonText: 'Sim, excluir!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Deletado!',
-                        'Seu item foi deletado com sucesso.',
-                        'success'
-                    ).then(() => {
-                        window.location.href = `../verify/deletarCliente.php?id=${id}`;
+            <script>
+                function confirmarSairConta() {
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: 'Você realmente deseja sair da conta?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, sair',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '../verify/logout.php';
+                        } else {
+                            console.log('Operação de saída da conta cancelada pelo usuário.');
+                        }
                     });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire(
-                        'Cancelado!',
-                        'A exclusão foi cancelada com sucesso.',
-                        'info'
-                    );
                 }
-            });
-        }
-    </script>
+
+                function confirmarExclusao(id) {
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: "Você não poderá reverter isso!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonColor: '#d33',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonText: 'Sim, excluir!',
+                        reverseButtons: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire(
+                                'Deletado!',
+                                'Seu item foi deletado com sucesso.',
+                                'success'
+                            ).then(() => {
+                                window.location.href = `../verify/deletarCliente.php?id=${id}`;
+                            });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            Swal.fire(
+                                'Cancelado!',
+                                'A exclusão foi cancelada com sucesso.',
+                                'info'
+                            );
+                        }
+                    });
+                }
+            </script>
 </body>
 
 </html>

@@ -17,21 +17,21 @@ try {
     }
 
     $sql = "SELECT 
-                a.id AS id_agendamento,
-                u.nome AS nome_usuario,
-                c.nome AS nome_corte,
-                a.telefone_cliente,
-                a.horario_agendamento,
-                a.observacoes,
-                a.referencia
-            FROM 
-                agendamentos a
-            JOIN 
-                usuarios u ON a.id_usuario = u.id
-            JOIN 
-                cortes c ON a.id_corte = c.id
-            WHERE 
-                a.id_usuario = :usuario_id";
+            a.id AS id_agendamento,
+            u.nome AS nome_usuario,
+            c.nome AS nome_corte,
+            a.telefone_cliente,
+            a.horario_agendamento,
+            a.observacoes,
+            a.referencia
+        FROM 
+            agendamentos a
+        JOIN 
+            usuarios u ON a.id_usuario = u.id
+        JOIN 
+            cortes c ON a.id_corte = c.id
+        WHERE 
+            a.id_usuario = :usuario_id";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':usuario_id', $_SESSION['usuario_id']);
@@ -86,20 +86,19 @@ try {
             border: none;
         }
 
-        .section-title{
+        .section-title {
             padding-top: 100px;
         }
-
     </style>
 </head>
 
 <body>
 
-<?php require('navbar.php'); ?>
+    <?php require('navbar.php'); ?>
 
-<?php
-if (isset($_GET['login']) && $_GET['login'] == 'success' && !isset($_SESSION['login_success_alerta'])) {
-    echo "<script>
+    <?php
+    if (isset($_GET['login']) && $_GET['login'] == 'success' && !isset($_SESSION['login_success_alerta'])) {
+        echo "<script>
     Swal.fire({
       position: 'top-end',
       icon: 'success',
@@ -108,11 +107,11 @@ if (isset($_GET['login']) && $_GET['login'] == 'success' && !isset($_SESSION['lo
       timer: 2000
     });
     </script>";
-    $_SESSION['login_success_alerta'] = true;
-}
+        $_SESSION['login_success_alerta'] = true;
+    }
 
-if (isset($_GET['cadastro_success']) && $_GET['cadastro_success'] == '1' && !isset($_SESSION['cadastro_success_alerta'])) {
-    echo "<script>
+    if (isset($_GET['cadastro_success']) && $_GET['cadastro_success'] == '1' && !isset($_SESSION['cadastro_success_alerta'])) {
+        echo "<script>
     Swal.fire({
       position: 'top-end',
       icon: 'success',
@@ -121,22 +120,22 @@ if (isset($_GET['cadastro_success']) && $_GET['cadastro_success'] == '1' && !iss
       timer: 2000
     });
     </script>";
-    $_SESSION['cadastro_success_alerta'] = true;
-}
+        $_SESSION['cadastro_success_alerta'] = true;
+    }
 
-if (isset($_GET['agendamento_existente']) && $_GET['agendamento_existente'] == 'true' && !isset($_SESSION['agendamento_existente_alerta'])) {
-    echo "<script>
+    if (isset($_GET['agendamento_existente']) && $_GET['agendamento_existente'] == 'true' && !isset($_SESSION['agendamento_existente_alerta'])) {
+        echo "<script>
     Swal.fire({
       icon: 'error',
       title: 'Erro',
       text: 'Você já possui um agendamento pendente!',
     });
     </script>";
-    $_SESSION['agendamento_existente_alerta'] = true;
-}
+        $_SESSION['agendamento_existente_alerta'] = true;
+    }
 
-if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['agendamento_success_alerta'])) {
-    echo "<script>
+    if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['agendamento_success_alerta'])) {
+        echo "<script>
     Swal.fire({
       position: 'top-end',
       icon: 'success',
@@ -145,13 +144,13 @@ if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['
       timer: 2000
     });
     </script>";
-    $_SESSION['agendamento_success_alerta'] = true;
-}
-?>
+        $_SESSION['agendamento_success_alerta'] = true;
+    }
+    ?>
 
     <section id="inicio" class="d-flex justify-content-center align-items-center">
         <div class="container text-center text-white">
-            <h1 class="pb-3" style="font-size: 45px">Bem Vindo ao Barba & Navalha</h1>
+            <h1 class="pb-3 pt-5" style="font-size: 45px">Bem Vindo ao Barba & Navalha</h1>
             <p class="pb-4" style="font-size: 16px">Oferecemos cortes de cabelo e barba de qualidade, além de serviços de estética masculina.</p>
         </div>
     </section>
@@ -198,115 +197,115 @@ if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['
 
 
     <section id="servicos" class="py-5">
-    <div class="container pt-5">
-        <h1 class="section-title text-center mb-4 py-4 text-white">Nossos Serviços</h1>
-        <div id="carouselServicos" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/cabeloMasc.jpg" class="card-img-top" alt="Corte de Cabelo">
-                                <div class="card-body">
-                                    <h4 class="card-title">Corte de Cabelo</h4>
-                                    <p class="card-text">R$30.00</p>
+        <div class="container pt-5">
+            <h1 class="section-title text-center mb-4 py-4 text-white">Nossos Serviços</h1>
+            <div id="carouselServicos" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/cabeloMasc.jpg" class="card-img-top" alt="Corte de Cabelo">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Corte de Cabelo</h4>
+                                        <p class="card-text">R$30.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/cabeloBarba.jpg" class="card-img-top" alt="Corte de Cabelo + Barba">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Corte de Cabelo + Barba</h4>
+                                        <p class="card-text">R$40.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/barboterapia.jpg" class="card-img-top" alt="Barboterapia">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Barboterapia</h4>
+                                        <p class="card-text">R$25.00</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/cabeloBarba.jpg" class="card-img-top" alt="Corte de Cabelo + Barba">
-                                <div class="card-body">
-                                    <h4 class="card-title">Corte de Cabelo + Barba</h4>
-                                    <p class="card-text">R$40.00</p>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/pigmentBarba.jpg" class="card-img-top" alt="Pigmentação de Barba">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Pigmentação de Barba</h4>
+                                        <p class="card-text">R$35.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/relaxCapilar.jpg" class="card-img-top" alt="Relaxamento Capilar">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Relaxamento Capilar</h4>
+                                        <p class="card-text">R$40.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/progressiva.jpg" class="card-img-top" alt="Progressiva">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Progressiva</h4>
+                                        <p class="card-text">R$50.00</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/barboterapia.jpg" class="card-img-top" alt="Barboterapia">
-                                <div class="card-body">
-                                    <h4 class="card-title">Barboterapia</h4>
-                                    <p class="card-text">R$25.00</p>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/designSobran.jpg" class="card-img-top" alt="Design de Sobrancelhas">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Design de Sobrancelhas</h4>
+                                        <p class="card-text">R$15.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/limpezaMasc.jpg" class="card-img-top" alt="Limpeza de Pele">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Limpeza de Pele</h4>
+                                        <p class="card-text">R$30.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="images/hidratacao.jpg" class="card-img-top" alt="Hidratação">
+                                    <div class="card-body">
+                                        <h4 class="card-title">Hidratação</h4>
+                                        <p class="card-text">R$30.00</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="carousel-item">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/pigmentBarba.jpg" class="card-img-top" alt="Pigmentação de Barba">
-                                <div class="card-body">
-                                    <h4 class="card-title">Pigmentação de Barba</h4>
-                                    <p class="card-text">R$35.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/relaxCapilar.jpg" class="card-img-top" alt="Relaxamento Capilar">
-                                <div class="card-body">
-                                    <h4 class="card-title">Relaxamento Capilar</h4>
-                                    <p class="card-text">R$40.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/progressiva.jpg" class="card-img-top" alt="Progressiva">
-                                <div class="card-body">
-                                    <h4 class="card-title">Progressiva</h4>
-                                    <p class="card-text">R$50.00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/designSobran.jpg" class="card-img-top" alt="Design de Sobrancelhas">
-                                <div class="card-body">
-                                    <h4 class="card-title">Design de Sobrancelhas</h4>
-                                    <p class="card-text">R$15.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/limpezaMasc.jpg" class="card-img-top" alt="Limpeza de Pele">
-                                <div class="card-body">
-                                    <h4 class="card-title">Limpeza de Pele</h4>
-                                    <p class="card-text">R$30.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="card h-100">
-                                <img src="images/hidratacao.jpg" class="card-img-top" alt="Hidratação">
-                                <div class="card-body">
-                                    <h4 class="card-title">Hidratação</h4>
-                                    <p class="card-text">R$30.00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselServicos" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselServicos" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselServicos" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselServicos" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
-    </div>
-</section>
+    </section>
 
     <section id="horarios" class="py-5 section-dark-bg">
         <div class="container pt-5">
@@ -426,15 +425,14 @@ if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['
                                         <tbody>
                                             <?php foreach ($agendamentos as $agendamento) : ?>
                                                 <tr>
-                                                    <td><?php echo htmlspecialchars($agendamento['nome_usuario'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                    <td><?php echo htmlspecialchars($agendamento['horario_agendamento'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                    <td><?php echo htmlspecialchars($agendamento['nome_corte'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                    <td><?php echo htmlspecialchars($agendamento['observacoes'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                    <td><?php echo htmlspecialchars($agendamento['referencia'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                                    <td><?php echo $agendamento['nome_usuario']; ?></td>
+                                                    <td><?php echo $agendamento['horario_agendamento']; ?></td>
+                                                    <td><?php echo $agendamento['nome_corte']; ?></td>
+                                                    <td><?php echo $agendamento['observacoes']; ?></td>
+                                                    <td><?php echo $agendamento['referencia']; ?></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
-
                                     </table>
                                 </div>
                             <?php else : ?>
@@ -444,7 +442,7 @@ if (isset($_GET['success']) && $_GET['success'] === 'true' && !isset($_SESSION['
                     </div>
                 </div>
             </div>
-        </div>
+
     </section>
 
     <?php
